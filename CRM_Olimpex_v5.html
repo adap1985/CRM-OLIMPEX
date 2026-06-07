@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>CRM Olimpex</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap');
+  :root{
+    --navy:#0F2444;--blue:#1B3A6B;--teal:#0A7B6B;--teal2:#0D9E8A;
+    --red:#D94040;--amber:#E8A020;--white:#FFFFFF;
+    --gray1:#F7F5F2;--gray2:#E8E4DE;--gray3:#9E9890;--text:#1A1614;
+    --r:12px;--rs:8px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  body{font-family:'DM Sans',sans-serif;background:var(--navy);min-height:100dvh;display:flex;flex-direction:column}
+
+  /* ── SELECCION VENDEDOR ── */
+  #sel{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px 20px;text-align:center}
+  .logo{width:68px;height:68px;background:linear-gradient(135deg,var(--teal),var(--teal2));border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 20px;box-shadow:0 8px 32px rgba(10,123,107,.4)}
+  #sel h1{color:#fff;font-size:22px;font-weight:700;margin-bottom:6px}
+  #sel p{color:rgba(255,255,255,.45);font-size:13px;margin-bottom:28px}
+  .vlist{width:100%;max-width:340px;display:flex;flex-direction:column;gap:8px}
+  .vcard{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.1);border-radius:13px;padding:13px 15px;cursor:pointer;transition:all .2s;text-align:left}
+  .vcard:active{transform:scale(.97)}
+  .vav{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;color:#fff;flex-shrink:0}
+  .vname{color:#fff;font-weight:600;font-size:14px}
+  .vemail{color:rgba(255,255,255,.4);font-size:11px;margin-top:1px}
+
+  /* ── APP ── */
+  #app{display:none;flex:1;flex-direction:column}
+  header{background:var(--navy);padding:12px 16px 10px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:20}
+  .hlogo{width:32px;height:32px;background:var(--teal);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+  .hinfo{flex:1}
+  header h1{color:#fff;font-size:15px;font-weight:600}
+  header small{color:rgba(255,255,255,.4);font-size:10px}
+  .chip{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.08);border-radius:20px;padding:4px 10px 4px 6px;cursor:pointer}
+  .chip-av{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:10px;color:#fff;flex-shrink:0}
+  .chip span{color:rgba(255,255,255,.7);font-size:11px;font-weight:500}
+
+  /* ── TABS (4 tabs) ── */
+  .tabs{display:flex;gap:3px;margin:0 14px;background:rgba(255,255,255,.06);padding:3px;border-radius:var(--r)}
+  .tab{flex:1;padding:9px 4px;border:none;border-radius:calc(var(--r)-3px);font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;background:transparent;color:rgba(255,255,255,.45);white-space:nowrap}
+  .tab.on{background:#fff;color:var(--navy);box-shadow:0 2px 8px rgba(0,0,0,.25)}
+
+  /* ── WRAP ── */
+  .wrap{flex:1;background:var(--gray1);border-radius:18px 18px 0 0;margin-top:12px;overflow:hidden}
+  .panel{display:none;padding:16px 15px 110px;animation:fu .22s ease}
+  .panel.on{display:block}
+  @keyframes fu{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+
+  .banner{display:flex;align-items:center;gap:10px;background:#fff;border:1.5px solid var(--gray2);border-radius:var(--rs);padding:9px 13px;margin-bottom:13px}
+  .ban-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff;flex-shrink:0}
+  .bname{font-weight:600;font-size:13px;color:var(--text)}
+  .bemail{font-size:11px;color:var(--gray3)}
+
+  .sec{font-size:10px;font-weight:700;letter-spacing:1.1px;text-transform:uppercase;color:var(--gray3);margin:15px 0 6px}
+  .sec:first-child{margin-top:0}
+  .f{margin-bottom:8px}
+  label{display:block;font-size:12px;font-weight:600;color:var(--text);margin-bottom:4px;opacity:.7}
+  label .r{color:var(--red)}
+  input[type=text],input[type=number],input[type=date],input[type=tel],select,textarea{width:100%;background:#fff;border:1.5px solid var(--gray2);border-radius:var(--rs);padding:11px 13px;font-family:'DM Sans',sans-serif;font-size:15px;color:var(--text);outline:none;transition:border-color .15s,box-shadow .15s;-webkit-appearance:none;appearance:none}
+  input:focus,select:focus,textarea:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(10,123,107,.12)}
+  select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239E9890' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center;padding-right:36px}
+  textarea{resize:none;line-height:1.5;min-height:72px}
+  .g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+
+  .pills{display:flex;flex-wrap:wrap;gap:6px}
+  .pill{padding:7px 13px;border:1.5px solid var(--gray2);border-radius:20px;background:#fff;font-size:13px;font-weight:500;color:var(--text);cursor:pointer;transition:all .15s}
+  .pill.on{background:var(--navy);border-color:var(--navy);color:#fff}
+
+  .etapas{display:flex;gap:5px;overflow-x:auto;padding-bottom:3px;scrollbar-width:none}
+  .etapas::-webkit-scrollbar{display:none}
+  .etapa{flex-shrink:0;padding:7px 12px;border-radius:6px;border:1.5px solid var(--gray2);background:#fff;font-size:12px;font-weight:600;color:var(--text);cursor:pointer;white-space:nowrap;transition:all .15s}
+  .etapa.on{color:#fff;border-color:transparent}
+  .etapa[data-e="Prospeccion"].on{background:#6366F1}
+  .etapa[data-e="Calificacion"].on{background:#F59E0B}
+  .etapa[data-e="Demo"].on{background:#3B82F6}
+  .etapa[data-e="Negociacion"].on{background:#F97316}
+  .etapa[data-e="Contrato"].on{background:#10B981}
+
+  /* ── PENDIENTES ── */
+  #panel-pend .loading{text-align:center;padding:30px;color:var(--gray3)}
+  .pend-resumen{background:var(--blue);color:#fff;border-radius:10px;padding:12px 16px;margin-bottom:14px;display:flex;gap:20px}
+  .pend-num{font-size:22px;font-weight:700}
+  .pend-label{font-size:11px;opacity:.7}
+  .pend-sec{font-size:12px;font-weight:700;color:var(--blue);margin:14px 0 7px;border-bottom:2px solid var(--blue);padding-bottom:3px}
+  .pcard{border:1px solid var(--gray2);border-radius:9px;padding:10px 12px;margin-bottom:8px;background:#fff;border-left-width:4px}
+  .pcard-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px;gap:8px}
+  .pcard-title{font-size:12px;font-weight:700;color:var(--blue);line-height:1.3}
+  .pbadge{flex-shrink:0;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;color:#fff}
+  .pcard-info{font-size:11px;color:#555;line-height:1.8}
+  .pcard-info b{color:var(--text)}
+  .empty-msg{text-align:center;color:var(--gray3);font-size:13px;font-style:italic;padding:16px}
+  .btn-refresh{width:100%;padding:11px;background:var(--blue);color:#fff;border:none;border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:14px;display:flex;align-items:center;justify-content:center;gap:7px}
+
+  /* ── SUBMIT ── */
+  .foot{position:fixed;bottom:0;left:0;right:0;padding:12px 15px 22px;background:linear-gradient(to top,var(--gray1) 70%,transparent);z-index:10}
+  .btn{width:100%;padding:15px;border:none;border-radius:var(--r);background:var(--teal);color:#fff;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;box-shadow:0 4px 16px rgba(10,123,107,.35);transition:all .15s}
+  .btn:active{transform:scale(.98)}
+  .btn.busy{opacity:.6;pointer-events:none}
+
+  .toast{position:fixed;top:-80px;left:50%;transform:translateX(-50%);background:var(--text);color:#fff;padding:11px 20px;border-radius:30px;font-size:14px;font-weight:500;white-space:nowrap;transition:top .35s cubic-bezier(.34,1.56,.64,1);z-index:200;box-shadow:0 8px 24px rgba(0,0,0,.3)}
+  .toast.show{top:16px}
+  .toast.ok{background:var(--teal)}
+  .toast.err{background:var(--red)}
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<!-- SELECCION -->
+<div id="sel">
+  <div class="logo">🏥</div>
+  <h1>CRM Olimpex</h1>
+  <p>Selecciona tu nombre para continuar</p>
+  <div class="vlist" id="vlist"></div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <header>
+    <div class="hlogo">🏥</div>
+    <div class="hinfo">
+      <h1>CRM Olimpex</h1>
+      <small>Registro rapido</small>
+    </div>
+    <div class="chip" onclick="cambiar()">
+      <div class="chip-av" id="chip-av"></div>
+      <span id="chip-name"></span>
+    </div>
+  </header>
+
+  <div class="tabs">
+    <button class="tab on"  onclick="tab('act')">📅 Actividad</button>
+    <button class="tab"     onclick="tab('proy')">🎯 Proyecto</button>
+    <button class="tab"     onclick="tab('cli')">🏥 Cliente</button>
+    <button class="tab"     onclick="tab('pend')">⏳ Pendientes</button>
+  </div>
+
+  <div class="wrap">
+
+    <!-- ══ ACTIVIDAD ══════════════════════════════════ -->
+    <div class="panel on" id="panel-act">
+      <div class="banner">
+        <div class="ban-av" id="bav-act"></div>
+        <div><div class="bname" id="bn-act">-</div><div class="bemail" id="be-act">-</div></div>
+      </div>
+
+      <div class="sec">Tipo de actividad</div>
+      <div class="pills" id="tipos">
+        <div class="pill on" onclick="pilla(this,'tipos')">📞 Llamada</div>
+        <div class="pill" onclick="pilla(this,'tipos')">🤝 Visita</div>
+        <div class="pill" onclick="pilla(this,'tipos')">📧 Email</div>
+        <div class="pill" onclick="pilla(this,'tipos')">💬 WhatsApp</div>
+        <div class="pill" onclick="pilla(this,'tipos')">🖥️ Video</div>
+      </div>
+
+      <div class="sec">Cliente y proyecto</div>
+      <div class="f"><label>Cliente <span class="r">*</span></label><input type="text" id="a-cli" placeholder="Ej: Clinica San Felipe"></div>
+      <div class="f"><label>Proyecto relacionado</label><input type="text" id="a-proy" placeholder="Ej: PROY-001"></div>
+      <div class="f"><label>Contacto</label><input type="text" id="a-cont" placeholder="Ej: Dr. Garcia Lopez"></div>
+
+      <div class="sec">Detalle</div>
+      <div class="f"><label>Resumen <span class="r">*</span></label><textarea id="a-res" placeholder="Que paso en la actividad?" rows="3"></textarea></div>
+      <div class="f"><label>Resultado</label><textarea id="a-result" placeholder="Cual fue el resultado?" rows="2"></textarea></div>
+
+      <div class="sec">Proximo paso</div>
+      <div class="f"><label>Accion siguiente <span class="r">*</span></label><input type="text" id="a-prox" placeholder="Ej: Enviar propuesta tecnica"></div>
+      <div class="g2">
+        <div class="f"><label>Fecha</label><input type="date" id="a-fprox"></div>
+        <div class="f"><label>Prioridad</label>
+          <select id="a-prio">
+            <option value="Alta">🔴 Alta</option>
+            <option value="Media" selected>🟡 Media</option>
+            <option value="Baja">🟢 Baja</option>
+          </select>
+        </div>
+      </div>
+      <div class="foot"><button class="btn" id="btn-act" onclick="envAct()"><span>✅ Registrar actividad</span></button></div>
+    </div>
+
+    <!-- ══ PROYECTO ════════════════════════════════════ -->
+    <div class="panel" id="panel-proy">
+      <div class="banner">
+        <div class="ban-av" id="bav-proy"></div>
+        <div><div class="bname" id="bn-proy">-</div><div class="bemail" id="be-proy">-</div></div>
+      </div>
+
+      <div class="sec">Oportunidad</div>
+      <div class="f"><label>Nombre del proyecto <span class="r">*</span></label><input type="text" id="p-nom" placeholder="Ej: Monitores UCI x5"></div>
+      <div class="g2">
+        <div class="f"><label>Cliente <span class="r">*</span></label><input type="text" id="p-cli" placeholder="Institucion"></div>
+        <div class="f"><label>Tipo</label>
+          <select id="p-tipo">
+            <option>Clinica Privada</option><option>Hospital Publico</option>
+            <option>Hospital Privado</option><option>Centro Medico</option>
+            <option>Subdistribuidor</option><option>Gobierno / MINSA</option>
+          </select>
+        </div>
+      </div>
+      <div class="g2">
+        <div class="f"><label>Ciudad</label><input type="text" id="p-ciu" placeholder="Lima"></div>
+        <div class="f"><label>Marca</label><input type="text" id="p-marca" placeholder="Ej: Stryker"></div>
+      </div>
+      <div class="f"><label>Descripcion del equipo</label><input type="text" id="p-desc" placeholder="Modelo y cantidad"></div>
+
+      <div class="sec">Valor</div>
+      <div class="g2">
+        <div class="f"><label>Valor ($) <span class="r">*</span></label><input type="number" id="p-val" placeholder="0" min="0"></div>
+        <div class="f"><label>Margen (%)</label><input type="number" id="p-marg" placeholder="20" min="0" max="100"></div>
+      </div>
+
+      <div class="sec">Etapa del pipeline</div>
+      <div class="etapas" id="etapas">
+        <div class="etapa on" data-e="Prospeccion" onclick="etapa(this)">Prospeccion</div>
+        <div class="etapa" data-e="Calificacion" onclick="etapa(this)">Calificacion</div>
+        <div class="etapa" data-e="Demo" onclick="etapa(this)">Demo/Propuesta</div>
+        <div class="etapa" data-e="Negociacion" onclick="etapa(this)">Negociacion</div>
+        <div class="etapa" data-e="Contrato" onclick="etapa(this)">Contrato Enviado</div>
+      </div>
+
+      <div class="sec">Fechas y seguimiento</div>
+      <div class="g2">
+        <div class="f"><label>Fecha inicio</label><input type="date" id="p-fi"></div>
+        <div class="f"><label>Cierre estimado</label><input type="date" id="p-fc"></div>
+      </div>
+      <div class="f"><label>Siguiente accion</label><input type="text" id="p-sig" placeholder="Ej: Presentar propuesta"></div>
+      <div class="g2">
+        <div class="f"><label>Fecha sig. accion</label><input type="date" id="p-fs"></div>
+        <div class="f"><label>Competencia</label><input type="text" id="p-comp" placeholder="Ej: Siemens"></div>
+      </div>
+      <div class="f"><label>Notas</label><textarea id="p-notas" placeholder="Observaciones..." rows="2"></textarea></div>
+      <div class="foot"><button class="btn" id="btn-proy" onclick="envProy()"><span>🎯 Registrar proyecto</span></button></div>
+    </div>
+
+    <!-- ══ CLIENTE NUEVO ═══════════════════════════════ -->
+    <div class="panel" id="panel-cli">
+      <div class="banner">
+        <div class="ban-av" id="bav-cli"></div>
+        <div><div class="bname" id="bn-cli">-</div><div class="bemail" id="be-cli">-</div></div>
+      </div>
+
+      <div class="sec">Datos de la institucion</div>
+      <div class="f"><label>Nombre del cliente <span class="r">*</span></label><input type="text" id="c-nom" placeholder="Ej: Hospital Regional de Ica"></div>
+      <div class="g2">
+        <div class="f"><label>Tipo <span class="r">*</span></label>
+          <select id="c-tipo">
+            <option>Clinica Privada</option><option>Hospital Publico</option>
+            <option>Hospital Privado</option><option>Centro Medico</option>
+            <option>Subdistribuidor</option><option>Gobierno / MINSA</option>
+          </select>
+        </div>
+        <div class="f"><label>Ciudad</label><input type="text" id="c-ciu" placeholder="Lima"></div>
+      </div>
+      <div class="f"><label>RUC</label><input type="text" id="c-ruc" placeholder="20XXXXXXXXX" maxlength="11"></div>
+
+      <div class="sec">Contacto principal</div>
+      <div class="f"><label>Nombre del contacto <span class="r">*</span></label><input type="text" id="c-cont" placeholder="Ej: Dr. Lopez Garcia"></div>
+      <div class="f"><label>Cargo</label><input type="text" id="c-cargo" placeholder="Ej: Jefe de Compras"></div>
+      <div class="g2">
+        <div class="f"><label>Telefono</label><input type="tel" id="c-tel" placeholder="999-000-111"></div>
+        <div class="f"><label>Email</label><input type="text" id="c-email" placeholder="correo@hospital.pe"></div>
+      </div>
+
+      <div class="sec">Comercial</div>
+      <div class="f"><label>Marcas de interes</label><input type="text" id="c-marcas" placeholder="Ej: Stryker, Givas"></div>
+      <div class="f"><label>Categoria</label>
+        <select id="c-cat">
+          <option value="A - Prioritario">⭐ A - Prioritario</option>
+          <option value="B - Regular" selected>B - Regular</option>
+          <option value="C - Ocasional">C - Ocasional</option>
+        </select>
+      </div>
+      <div class="f"><label>Notas</label><textarea id="c-notas" placeholder="Observaciones del cliente..." rows="2"></textarea></div>
+
+      <div class="foot"><button class="btn" id="btn-cli" onclick="envCli()"><span>🏥 Registrar cliente</span></button></div>
+    </div>
+
+    <!-- ══ PENDIENTES ══════════════════════════════════ -->
+    <div class="panel" id="panel-pend">
+      <button class="btn-refresh" onclick="cargarPendientes()">🔄 Actualizar pendientes</button>
+      <div id="pend-content">
+        <div class="loading">Toca "Actualizar" para cargar tus pendientes</div>
+      </div>
+    </div>
+
+  </div><!-- wrap -->
+</div><!-- app -->
+
+<script>
+// ═══════════════════════════════════════════════════
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbynUPL93M5WoU61vri4NiQhSVItkD36ErsbPMAHdnJSlZIEECr16xdVu8haUp0jZutEZQ/exec";
+
+const ADMINS = ["ameza@olimpexperu.com","agdelaguila@olimpexperu.com"];
+
+const VENDEDORES = [
+  {nombre:"Amador del Aguila",  email:"agdelaguila@olimpexperu.com",  color:"#1B3A6B"},
+  {nombre:"Yafir Ramos",        email:"yramos@olimpexperu.com",        color:"#0A7B6B"},
+  {nombre:"Miguel Saldarriaga", email:"ventas3@olimpexperu.com",       color:"#7C3AED"},
+  {nombre:"Sheyla Zabarburu",   email:"ventas@olimpexperu.com",        color:"#DB2777"},
+  {nombre:"Ana Ossio",          email:"especialistaclinico@olimpexperu.com", color:"#D97706"},
+  {nombre:"Helen Casaus",       email:"ventas5@olimpexperu.com",       color:"#059669"},
+  {nombre:"Andrea Meza",        email:"ameza@olimpexperu.com",         color:"#DC2626"},
+];
+
+let U = null;
+
+// ── VENDEDOR LIST ─────────────────────────────────
+function buildList() {
+  const lista = document.getElementById("vlist");
+  VENDEDORES.forEach(v => {
+    const ini = v.nombre.split(" ").slice(0,2).map(n=>n[0]).join("");
+    const d = document.createElement("div");
+    d.className = "vcard";
+    d.innerHTML = `<div class="vav" style="background:${v.color}">${ini}</div>
+      <div><div class="vname">${v.nombre}</div><div class="vemail">${v.email}</div></div>`;
+    d.onclick = () => selV(v);
+    lista.appendChild(d);
+  });
+}
+
+function selV(v) {
+  U = v;
+  sessionStorage.setItem("crm_v", JSON.stringify(v));
+  aplicar();
+  document.getElementById("sel").style.display = "none";
+  document.getElementById("app").style.display = "flex";
+}
+
+function aplicar() {
+  if (!U) return;
+  const ini   = U.nombre.split(" ").slice(0,2).map(n=>n[0]).join("");
+  const first = U.nombre.split(" ")[0];
+  document.getElementById("chip-av").textContent   = ini;
+  document.getElementById("chip-av").style.background = U.color;
+  document.getElementById("chip-name").textContent = first;
+  ["act","proy","cli"].forEach(x => {
+    document.getElementById("bav-"+x).textContent = ini;
+    document.getElementById("bav-"+x).style.background = U.color;
+    document.getElementById("bn-"+x).textContent  = U.nombre;
+    document.getElementById("be-"+x).textContent  = U.email;
+  });
+}
+
+function cambiar() {
+  if (confirm("Cambiar de vendedor?")) {
+    U = null; sessionStorage.removeItem("crm_v");
+    document.getElementById("app").style.display = "none";
+    document.getElementById("sel").style.display = "flex";
+  }
+}
+
+// ── UI ────────────────────────────────────────────
+function tab(t) {
+  const tabs = ["act","proy","cli","pend"];
+  document.querySelectorAll(".tab").forEach((el,i) => el.classList.toggle("on", tabs[i]===t));
+  tabs.forEach(x => document.getElementById("panel-"+x).classList.toggle("on", x===t));
+  if (t==="pend") cargarPendientes();
+}
+function pilla(el,g){document.querySelectorAll("#"+g+" .pill").forEach(p=>p.classList.remove("on"));el.classList.add("on")}
+function etapa(el){document.querySelectorAll("#etapas .etapa").forEach(e=>e.classList.remove("on"));el.classList.add("on")}
+function toast(msg,tipo="ok"){
+  const t=document.getElementById("toast");
+  t.textContent=msg;t.className="toast show "+tipo;
+  setTimeout(()=>t.classList.remove("show"),3200);
+}
+
+// ── PENDIENTES ────────────────────────────────────
+async function cargarPendientes() {
+  if (!U) return;
+  const cont = document.getElementById("pend-content");
+  cont.innerHTML = '<div class="loading">⏳ Cargando pendientes...</div>';
+
+  try {
+    const esAdmin = ADMINS.includes(U.email);
+    const payload = { tipo:"pendientes", emailVendedor:U.email, vendedor:U.nombre, esAdmin };
+    const url = SCRIPT_URL+"?data="+encodeURIComponent(JSON.stringify(payload));
+    const res = await fetch(url);
+    const data = await res.json();
+
+    if (!data.ok) { cont.innerHTML = '<div class="loading">No se pudieron cargar los pendientes.</div>'; return; }
+
+    renderPendientes(data.proyectos||[], data.actividades||[], esAdmin);
+  } catch(e) {
+    cont.innerHTML = '<div class="loading">Error de conexion. Reintenta.</div>';
+  }
+}
+
+function renderPendientes(proy, act, esAdmin) {
+  const cont = document.getElementById("pend-content");
+  const total = proy.length + act.length;
+  const venc  = [...proy,...act].filter(x=>x.urgencia==="vencido").length;
+  const urg   = [...proy,...act].filter(x=>x.urgencia==="urgente").length;
+
+  const col = u => u==="vencido"?"#dc3545":u==="urgente"?"#fd7e14":"#198754";
+  const badge = u => u==="vencido"
+    ?`<span class="pbadge" style="background:#dc3545">VENCIDO</span>`
+    :u==="urgente"
+    ?`<span class="pbadge" style="background:#fd7e14">URGENTE</span>`
+    :`<span class="pbadge" style="background:#198754">OK</span>`;
+
+  const cardP = p => `
+    <div class="pcard" style="border-left-color:${col(p.urgencia)}">
+      <div class="pcard-top">
+        <div class="pcard-title">${p.nombre}</div>${badge(p.urgencia)}
+      </div>
+      <div class="pcard-info">
+        🏥 <b>${p.cliente}</b> · ${p.etapa}<br>
+        💵 $${Number(p.valor||0).toLocaleString()}<br>
+        ➡️ ${p.sigAccion||"—"}<br>
+        🗓️ <b>${p.fechaAccion||"—"}</b>
+        ${esAdmin?`<br>👤 ${p.vendedor}`:""}
+      </div>
+    </div>`;
+
+  const cardA = a => `
+    <div class="pcard" style="border-left-color:${col(a.urgencia)}">
+      <div class="pcard-top">
+        <div class="pcard-title" style="color:#0D6E6E">${a.tipo} · ${a.cliente}</div>${badge(a.urgencia)}
+      </div>
+      <div class="pcard-info">
+        📝 ${a.resumen}<br>
+        ➡️ ${a.proxPaso||"—"}<br>
+        🗓️ <b>${a.fechaProx||"—"}</b> · ${a.prioridad||"—"}
+        ${esAdmin?`<br>👤 ${a.vendedor}`:""}
+      </div>
+    </div>`;
+
+  cont.innerHTML = `
+    <div class="pend-resumen">
+      <div><div class="pend-num">${total}</div><div class="pend-label">Total</div></div>
+      <div><div class="pend-num" style="color:#ff6b6b">${venc}</div><div class="pend-label">Vencidos</div></div>
+      <div><div class="pend-num" style="color:#ffd43b">${urg}</div><div class="pend-label">Urgentes</div></div>
+    </div>
+    <div class="pend-sec">🎯 Proyectos activos (${proy.length})</div>
+    ${proy.length>0?proy.map(cardP).join(""):'<div class="empty-msg">Sin proyectos pendientes 🎉</div>'}
+    <div class="pend-sec">📅 Actividades pendientes (${act.length})</div>
+    ${act.length>0?act.map(cardA).join(""):'<div class="empty-msg">Sin actividades pendientes 🎉</div>'}`;
+}
+
+// ── ENVIOS ────────────────────────────────────────
+const ETAPA_MAP={"Prospeccion":"Prospeccion","Calificacion":"Calificacion","Demo":"Demo/Propuesta","Negociacion":"Negociacion","Contrato":"Contrato Enviado"};
+const PROB_MAP ={"Prospeccion":.1,"Calificacion":.25,"Demo":.5,"Negociacion":.7,"Contrato":.85};
+
+async function envAct() {
+  const cli=document.getElementById("a-cli").value.trim();
+  const res=document.getElementById("a-res").value.trim();
+  const prox=document.getElementById("a-prox").value.trim();
+  if(!cli) return toast("Escribe el cliente","err");
+  if(!res) return toast("Agrega el resumen","err");
+  if(!prox) return toast("Define el proximo paso","err");
+  const tipo=(document.querySelector("#tipos .pill.on")?.textContent||"Llamada").replace(/[^\w\s]/g,"").trim();
+  await send("btn-act",{tipo:"actividad",vendedor:U.nombre,emailVendedor:U.email,tipoAct:tipo,cliente:cli,
+    proyecto:document.getElementById("a-proy").value.trim(),
+    contacto:document.getElementById("a-cont").value.trim(),
+    resumen:res,resultado:document.getElementById("a-result").value.trim(),
+    proximoPaso:prox,fechaProximo:document.getElementById("a-fprox").value,
+    prioridad:document.getElementById("a-prio").value},"Actividad registrada","act");
+}
+
+async function envProy() {
+  const nom=document.getElementById("p-nom").value.trim();
+  const cli=document.getElementById("p-cli").value.trim();
+  const val=document.getElementById("p-val").value;
+  if(!nom) return toast("Escribe el nombre del proyecto","err");
+  if(!cli) return toast("Escribe el cliente","err");
+  if(!val) return toast("Ingresa el valor estimado","err");
+  const etKey=document.querySelector("#etapas .etapa.on")?.dataset.e||"Prospeccion";
+  await send("btn-proy",{tipo:"proyecto",vendedor:U.nombre,emailVendedor:U.email,
+    nombre:nom,cliente:cli,tipoCliente:document.getElementById("p-tipo").value,
+    ciudad:document.getElementById("p-ciu").value.trim(),
+    marca:document.getElementById("p-marca").value.trim(),
+    descripcion:document.getElementById("p-desc").value.trim(),
+    valor:parseFloat(val),margen:(parseFloat(document.getElementById("p-marg").value)||0)/100,
+    etapa:ETAPA_MAP[etKey]||"Prospeccion",probabilidad:PROB_MAP[etKey]||.1,
+    fechaInicio:document.getElementById("p-fi").value,
+    fechaCierre:document.getElementById("p-fc").value,
+    sigAccion:document.getElementById("p-sig").value.trim(),
+    fechaSig:document.getElementById("p-fs").value,
+    competencia:document.getElementById("p-comp").value.trim(),
+    notas:document.getElementById("p-notas").value.trim()},"Proyecto registrado","proy");
+}
+
+async function envCli() {
+  const nom=document.getElementById("c-nom").value.trim();
+  const cont=document.getElementById("c-cont").value.trim();
+  if(!nom)  return toast("Escribe el nombre del cliente","err");
+  if(!cont) return toast("Escribe el nombre del contacto","err");
+  await send("btn-cli",{tipo:"cliente",vendedor:U.nombre,emailVendedor:U.email,
+    nombre:nom,tipo_cli:document.getElementById("c-tipo").value,
+    ciudad:document.getElementById("c-ciu").value.trim(),
+    ruc:document.getElementById("c-ruc").value.trim(),
+    contacto:cont,cargo:document.getElementById("c-cargo").value.trim(),
+    telefono:document.getElementById("c-tel").value.trim(),
+    emailCliente:document.getElementById("c-email").value.trim(),
+    marcas:document.getElementById("c-marcas").value.trim(),
+    categoria:document.getElementById("c-cat").value,
+    notas:document.getElementById("c-notas").value.trim()},"Cliente registrado","cli");
+}
+
+async function send(btnId, payload, msgOk, prefix) {
+  const btn=document.getElementById(btnId);
+  btn.classList.add("busy");
+  btn.querySelector("span").textContent="Enviando...";
+  try {
+    await fetch(SCRIPT_URL+"?data="+encodeURIComponent(JSON.stringify(payload)),{method:"GET",mode:"no-cors"});
+    toast("✅ "+msgOk);
+    limpiar(prefix);
+  } catch(e){ toast("Error de red, reintenta","err"); }
+  finally {
+    btn.classList.remove("busy");
+    const labels={act:"✅ Registrar actividad",proy:"🎯 Registrar proyecto",cli:"🏥 Registrar cliente"};
+    btn.querySelector("span").textContent=labels[prefix]||msgOk;
+  }
+}
+
+function limpiar(p) {
+  const map={
+    act:["a-cli","a-proy","a-cont","a-res","a-result","a-prox"],
+    proy:["p-nom","p-cli","p-ciu","p-marca","p-desc","p-val","p-marg","p-sig","p-comp","p-notas"],
+    cli:["c-nom","c-ciu","c-ruc","c-cont","c-cargo","c-tel","c-email","c-marcas","c-notas"],
+  };
+  (map[p]||[]).forEach(id=>{const el=document.getElementById(id);if(el)el.value="";});
+  if(p==="act") document.querySelectorAll("#tipos .pill").forEach((x,i)=>x.classList.toggle("on",i===0));
+  if(p==="proy") document.querySelectorAll("#etapas .etapa").forEach((x,i)=>x.classList.toggle("on",i===0));
+  document.getElementById("panel-"+p)?.scrollTo({top:0,behavior:"smooth"});
+}
+
+// ── INICIO ────────────────────────────────────────
+window.addEventListener("load",()=>{
+  const hoy=new Date().toISOString().split("T")[0];
+  document.querySelectorAll('input[type=date]').forEach(el=>el.value=hoy);
+  buildList();
+  try{
+    const s=sessionStorage.getItem("crm_v");
+    if(s){U=JSON.parse(s);aplicar();document.getElementById("sel").style.display="none";document.getElementById("app").style.display="flex";return;}
+  }catch(e){}
+  document.getElementById("sel").style.display="flex";
+  document.getElementById("app").style.display="none";
+});
+</script>
+</body>
+</html>
