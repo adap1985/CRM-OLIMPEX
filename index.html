@@ -462,40 +462,52 @@ function buscar(id, query) {
 
   if (filtrados.length === 0 && !q) { dd.classList.remove("show"); return; }
 
-  dd.innerHTML = filtrados.map(x => {
+  dd.innerHTML = "";
+  filtrados.forEach(x => {
     const sub = esCliente
       ? `${x.tipo||""} · ${x.ciudad||""}`
       : `${x.cliente||""} · ${x.etapa||""}`;
-    return `<div class="drop-item" onclick="seleccionar('${id}','${x.nombre||x.id}','${(x.nombre||x.id).replace(/'/g,"\\'")}')">
-      <div class="drop-name">${x.nombre||x.id}</div>
-      <div class="drop-sub">${sub}</div>
-    </div>`;
-  }).join("");
+    const div = document.createElement("div");
+    div.className = "drop-item";
+    div.innerHTML = `<div class="drop-name">${x.nombre||x.id}</div><div class="drop-sub">${sub}</div>`;
+    div.addEventListener("click", () => seleccionar(id, x.nombre||x.id));
+    dd.appendChild(div);
+  });
 
   if (esCliente) {
-    dd.innerHTML += `<div class="drop-new" onclick="nuevoCli('${id}','${q}')">+ Registrar "${q||"nuevo cliente"}"</div>`;
+    const divNew = document.createElement("div");
+    divNew.className = "drop-new";
+    divNew.textContent = `+ Registrar "${q||"nuevo cliente"}"`;
+    divNew.addEventListener("click", () => nuevoCli(id, q));
+    dd.appendChild(divNew);
   }
 
   dd.classList.add("show");
 }
 
-function seleccionar(id, valor, label) {
-  const hidden  = document.getElementById(id.replace("act-","a-").replace("proy-","p-").replace("-search","").replace("act-cli","a-cli").replace("act-proy","a-proy").replace("proy-cli","p-cli"));
-  const search  = document.getElementById(id+"-search");
-  const sel     = document.getElementById("sel-"+id);
-  const dd      = document.getElementById("dd-"+id);
+function seleccionar(id, valor) {
+  if (id==="act-cli")  document.getElementById("a-cli").value  = valor;
+  if (id==="act-proy") document.getElementById("a-proy").value = valor;
+  if (id==="proy-cli") document.getElementById("p-cli").value  = valor;
 
-  // set hidden value
-  if (id==="act-cli")  document.getElementById("a-cli").value  = label;
-  if (id==="act-proy") document.getElementById("a-proy").value = label;
-  if (id==="proy-cli") document.getElementById("p-cli").value  = label;
+  const search = document.getElementById(id+"-search");
+  const sel    = document.getElementById("sel-"+id);
+  const dd     = document.getElementById("dd-"+id);
 
   search.value = "";
   search.style.display = "none";
   document.getElementById("sc-"+id).style.display = "none";
   dd.classList.remove("show");
 
-  sel.innerHTML = `<div class="selected-chip">${label} <button onclick="deseleccionar('${id}')">✕</button></div>`;
+  const chip = document.createElement("div");
+  chip.className = "selected-chip";
+  chip.innerHTML = `${valor} `;
+  const btn = document.createElement("button");
+  btn.textContent = "✕";
+  btn.onclick = () => deseleccionar(id);
+  chip.appendChild(btn);
+  sel.innerHTML = "";
+  sel.appendChild(chip);
 }
 
 function deseleccionar(id) {
