@@ -441,114 +441,43 @@ async function cargarCaches() {
       fetch(SCRIPT_URL+"?data="+encodeURIComponent(JSON.stringify({tipo:"clientes",emailVendedor:U.email,vendedor:U.name}))).then(r=>r.json()),
       fetch(SCRIPT_URL+"?data="+encodeURIComponent(JSON.stringify({tipo:"proyectos_lista",emailVendedor:U.email,vendedor:U.name}))).then(r=>r.json()),
     ]);
-    if (rc.ok)  CACHE_CLIENTES  = rc.clientes  || [];
-    if (rp.ok)  CACHE_PROYECTOS = rp.proyectos || [];
+    if (rc.ok) {
+      CACHE_CLIENTES = rc.clientes || [];
+      // Poblar selects de clientes
+      ["a-cli","p-cli"].forEach(id => {
+        const sel = document.getElementById(id);
+        if (!sel) return;
+        const current = sel.value;
+        sel.innerHTML = `<option value="">— Selecciona un cliente —</option>`;
+        CACHE_CLIENTES.forEach(c => {
+          const opt = document.createElement("option");
+          opt.value = c.nombre;
+          opt.textContent = c.nombre + (c.ciudad ? " · " + c.ciudad : "");
+          sel.appendChild(opt);
+        });
+        sel.value = current;
+      });
+    }
+    if (rp.ok) {
+      CACHE_PROYECTOS = rp.proyectos || [];
+      // Poblar select de proyectos
+      const selProy = document.getElementById("a-proy");
+      if (selProy) {
+        const current = selProy.value;
+        selProy.innerHTML = `<option value="">— Ninguno / sin proyecto —</option>`;
+        CACHE_PROYECTOS.forEach(p => {
+          const opt = document.createElement("option");
+          opt.value = p.id;
+          opt.textContent = p.id + " — " + p.nombre + " (" + p.etapa + ")";
+          selProy.appendChild(opt);
+        });
+        selProy.value = current;
+      }
+    }
   } catch(e) { console.error("Error cargando caches:", e); }
 }
 
-// ── BUSCADOR ──────────────────────────────────────
-function buscarFocus(id) {
-  buscar(id, document.getElementById(id+"-search").value);
-}
-
-function buscar(id, query) {
-  const dd    = document.getElementById("dd-"+id);
-  const clear = document.getElementById("sc-"+id);
-  const q     = (query||"").toLowerCase().trim();
-
-  clear.style.display = q ? "block" : "none";
-
-  const esCliente = id.endsWith("cli");
-  const lista     = esCliente ? CACHE_CLIENTES : CACHE_PROYECTOS;
-
-  const filtrados = q
-    ? lista.filter(x => (x.nombre||"").toLowerCase().includes(q) || (x.cliente||"").toLowerCase().includes(q))
-    : lista.slice(0, 8);
-
-  if (filtrados.length === 0 && !q) { dd.classList.remove("show"); return; }
-
-  dd.innerHTML = "";
-  filtrados.forEach(x => {
-    const sub = esCliente
-      ? `${x.tipo||""} · ${x.ciudad||""}`
-      : `${x.cliente||""} · ${x.etapa||""}`;
-    const div = document.createElement("div");
-    div.className = "drop-item";
-    div.innerHTML = `<div class="drop-name">${x.nombre||x.id}</div><div class="drop-sub">${sub}</div>`;
-    // Use click for desktop, touchend for mobile
-    const doSelect = () => seleccionar(id, x.nombre||x.id);
-    div.addEventListener("click", doSelect);
-    dd.appendChild(div);
-  });
-
-  if (esCliente) {
-    const divNew = document.createElement("div");
-    divNew.className = "drop-new";
-    divNew.textContent = `+ Registrar "${q||"nuevo cliente"}"`;
-    divNew.addEventListener("click", () => nuevoCli(id, q));
-    dd.appendChild(divNew);
-  }
-
-  dd.classList.add("show");
-}
-
-function seleccionar(id, valor) {
-  if (id==="act-cli")  document.getElementById("a-cli").value  = valor;
-  if (id==="act-proy") document.getElementById("a-proy").value = valor;
-  if (id==="proy-cli") document.getElementById("p-cli").value  = valor;
-
-  const search = document.getElementById(id+"-search");
-  const sel    = document.getElementById("sel-"+id);
-  const dd     = document.getElementById("dd-"+id);
-
-  search.value = "";
-  search.style.display = "none";
-  document.getElementById("sc-"+id).style.display = "none";
-  dd.classList.remove("show");
-
-  const chip = document.createElement("div");
-  chip.className = "selected-chip";
-  chip.innerHTML = `${valor} `;
-  const btn = document.createElement("button");
-  btn.textContent = "✕";
-  btn.onclick = () => deseleccionar(id);
-  chip.appendChild(btn);
-  sel.innerHTML = "";
-  sel.appendChild(chip);
-}
-
-function deseleccionar(id) {
-  if (id==="act-cli")  document.getElementById("a-cli").value  = "";
-  if (id==="act-proy") document.getElementById("a-proy").value = "";
-  if (id==="proy-cli") document.getElementById("p-cli").value  = "";
-
-  const search = document.getElementById(id+"-search");
-  search.value = ""; search.style.display = "";
-  document.getElementById("sel-"+id).innerHTML = "";
-  document.getElementById("dd-"+id).classList.remove("show");
-}
-
-function limpiarBusqueda(id) {
-  const search = document.getElementById(id+"-search");
-  search.value = "";
-  document.getElementById("sc-"+id).style.display = "none";
-  document.getElementById("dd-"+id).classList.remove("show");
-  search.focus();
-}
-
-function nuevoCli(id, nombre) {
-  document.getElementById("dd-"+id).classList.remove("show");
-  tab("cli");
-  if (nombre) document.getElementById("c-nom").value = nombre;
-  toast("Registra el cliente nuevo primero","ok");
-}
-
-// Cerrar dropdown al tocar fuera
-document.addEventListener("click", e => {
-  if (!e.target.closest(".search-wrap")) {
-    document.querySelectorAll(".drop-list").forEach(d=>d.classList.remove("show"));
-  }
-});
+// ── BUSCADOR eliminado — ahora usa select nativo ──
 
 // ── UI ────────────────────────────────────────────
 function tab(t) {
@@ -702,11 +631,12 @@ function limpiar(p) {
   (map[p]||[]).forEach(id=>{const el=document.getElementById(id);if(el)el.value="";});
   if(p==="act"){
     document.querySelectorAll("#tipos .pill").forEach((x,i)=>x.classList.toggle("on",i===0));
-    deseleccionar("act-cli"); deseleccionar("act-proy");
+    const ac=document.getElementById("a-cli"); if(ac) ac.value="";
+    const ap=document.getElementById("a-proy"); if(ap) ap.value="";
   }
   if(p==="proy"){
     document.querySelectorAll("#etapas .etapa").forEach((x,i)=>x.classList.toggle("on",i===0));
-    deseleccionar("proy-cli");
+    const pc=document.getElementById("p-cli"); if(pc) pc.value="";
   }
   document.getElementById("panel-"+p)?.scrollTo({top:0,behavior:"smooth"});
 }
