@@ -15,7 +15,7 @@
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
   body{font-family:'DM Sans',sans-serif;background:var(--navy);min-height:100dvh;display:flex;flex-direction:column}
 
-  /* ── LOGIN ── */
+  /* LOGIN */
   #login{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;text-align:center}
   .logo{width:70px;height:70px;background:linear-gradient(135deg,var(--teal),var(--teal2));border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 22px;box-shadow:0 8px 32px rgba(10,123,107,.4)}
   #login h1{color:#fff;font-size:24px;font-weight:700;margin-bottom:8px}
@@ -27,20 +27,18 @@
   .note{color:rgba(255,255,255,.3);font-size:11px;line-height:1.7}
   .note b{color:rgba(255,255,255,.5)}
 
-  /* ── ERROR ── */
+  /* ERROR / LOADING */
   #err-screen{display:none;flex:1;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;text-align:center}
   .err-icon{font-size:52px;margin-bottom:20px}
   #err-screen h2{color:#fff;font-size:20px;margin-bottom:10px}
   #err-screen p{color:rgba(255,255,255,.5);font-size:14px;line-height:1.6;margin-bottom:28px}
   .btn-out{padding:12px 28px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:8px;color:#fff;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer}
-
-  /* ── LOADING ── */
   #loading{display:none;flex:1;flex-direction:column;align-items:center;justify-content:center;gap:16px}
   .spin{width:38px;height:38px;border:3px solid rgba(255,255,255,.15);border-top-color:var(--teal);border-radius:50%;animation:sp .8s linear infinite}
   @keyframes sp{to{transform:rotate(360deg)}}
   #loading p{color:rgba(255,255,255,.5);font-size:14px}
 
-  /* ── APP ── */
+  /* APP */
   #app{display:none;flex:1;flex-direction:column}
   header{background:var(--navy);padding:12px 16px 10px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:20}
   .hlogo{width:32px;height:32px;background:var(--teal);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
@@ -51,12 +49,10 @@
   .chip img{width:24px;height:24px;border-radius:50%;object-fit:cover}
   .chip span{color:rgba(255,255,255,.7);font-size:11px;font-weight:500;max-width:70px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
-  /* ── TABS ── */
   .tabs{display:flex;gap:3px;margin:0 14px;background:rgba(255,255,255,.06);padding:3px;border-radius:var(--r)}
   .tab{flex:1;padding:9px 4px;border:none;border-radius:calc(var(--r)-3px);font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;background:transparent;color:rgba(255,255,255,.45);white-space:nowrap}
   .tab.on{background:#fff;color:var(--navy);box-shadow:0 2px 8px rgba(0,0,0,.25)}
 
-  /* ── WRAP ── */
   .wrap{flex:1;background:var(--gray1);border-radius:18px 18px 0 0;margin-top:12px;overflow:hidden}
   .panel{display:none;padding:16px 15px 110px;animation:fu .22s ease}
   .panel.on{display:block}
@@ -78,6 +74,23 @@
   textarea{resize:none;line-height:1.5;min-height:72px}
   .g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 
+  /* BUSCADOR */
+  .search-wrap{position:relative}
+  .search-input{width:100%;background:#fff;border:1.5px solid var(--gray2);border-radius:var(--rs);padding:11px 13px 11px 38px;font-family:'DM Sans',sans-serif;font-size:15px;color:var(--text);outline:none;transition:border-color .15s,box-shadow .15s;-webkit-appearance:none}
+  .search-input:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(10,123,107,.12)}
+  .search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:15px;pointer-events:none}
+  .search-clear{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:16px;cursor:pointer;color:var(--gray3);display:none}
+  .dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1.5px solid var(--teal);border-radius:var(--rs);z-index:100;max-height:200px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,.12);display:none}
+  .dropdown.show{display:block}
+  .drop-item{padding:11px 13px;cursor:pointer;border-bottom:1px solid var(--gray2);transition:background .1s}
+  .drop-item:last-child{border-bottom:none}
+  .drop-item:active{background:var(--gray1)}
+  .drop-name{font-size:14px;font-weight:600;color:var(--text)}
+  .drop-sub{font-size:11px;color:var(--gray3);margin-top:1px}
+  .drop-new{padding:11px 13px;cursor:pointer;color:var(--teal);font-size:13px;font-weight:600;border-top:1px solid var(--gray2)}
+  .selected-chip{display:inline-flex;align-items:center;gap:6px;background:var(--teal);color:#fff;border-radius:20px;padding:5px 12px;font-size:12px;font-weight:600;margin-top:5px}
+  .selected-chip button{background:none;border:none;color:#fff;cursor:pointer;font-size:14px;padding:0;line-height:1}
+
   .pills{display:flex;flex-wrap:wrap;gap:6px}
   .pill{padding:7px 13px;border:1.5px solid var(--gray2);border-radius:20px;background:#fff;font-size:13px;font-weight:500;color:var(--text);cursor:pointer;transition:all .15s}
   .pill.on{background:var(--navy);border-color:var(--navy);color:#fff}
@@ -92,7 +105,7 @@
   .etapa[data-e="Negociacion"].on{background:#F97316}
   .etapa[data-e="Contrato"].on{background:#10B981}
 
-  /* ── PENDIENTES ── */
+  /* PENDIENTES */
   .pend-resumen{background:var(--blue);color:#fff;border-radius:10px;padding:12px 16px;margin-bottom:14px;display:flex;gap:20px}
   .pend-num{font-size:22px;font-weight:700}
   .pend-label{font-size:11px;opacity:.7}
@@ -107,7 +120,6 @@
   .btn-refresh{width:100%;padding:11px;background:var(--blue);color:#fff;border:none;border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:14px;display:flex;align-items:center;justify-content:center;gap:7px}
   .loading-msg{text-align:center;padding:30px;color:var(--gray3);font-size:13px}
 
-  /* ── SUBMIT ── */
   .foot{position:fixed;bottom:0;left:0;right:0;padding:12px 15px 22px;background:linear-gradient(to top,var(--gray1) 70%,transparent);z-index:10}
   .btn{width:100%;padding:15px;border:none;border-radius:var(--r);background:var(--teal);color:#fff;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;box-shadow:0 4px 16px rgba(10,123,107,.35);transition:all .15s}
   .btn:active{transform:scale(.98)}
@@ -123,7 +135,7 @@
 
 <div class="toast" id="toast"></div>
 
-<!-- ── LOGIN ────────────────────────────────────────── -->
+<!-- LOGIN -->
 <div id="login">
   <div class="logo">🏥</div>
   <h1>CRM Olimpex</h1>
@@ -143,30 +155,22 @@
   <p class="note">Solo cuentas <b>@olimpexperu.com</b> tienen acceso.</p>
 </div>
 
-<!-- ── CARGANDO ───────────────────────────────────── -->
-<div id="loading">
-  <div class="spin"></div>
-  <p>Verificando cuenta...</p>
-</div>
+<div id="loading"><div class="spin"></div><p>Verificando cuenta...</p></div>
 
-<!-- ── ACCESO DENEGADO ───────────────────────────── -->
 <div id="err-screen">
   <div class="err-icon">🚫</div>
   <h2>Acceso restringido</h2>
   <p>Este CRM es exclusivo para<br><b style="color:#fff">@olimpexperu.com</b><br><br>
-  <span id="err-email" style="color:rgba(255,255,255,.5);font-size:12px"></span><br>no tiene permiso.</p>
+  <span id="err-email" style="color:rgba(255,255,255,.5);font-size:12px"></span></p>
   <button class="btn-out" onclick="cerrarSesion()">Usar otra cuenta</button>
 </div>
 
-<!-- ── APP ───────────────────────────────────────── -->
+<!-- APP -->
 <div id="app">
   <header>
     <div class="hlogo">🏥</div>
-    <div class="hinfo">
-      <h1>CRM Olimpex</h1>
-      <small id="h-rol">Vendedor</small>
-    </div>
-    <div class="chip" onclick="cerrarSesion()" title="Cerrar sesion">
+    <div class="hinfo"><h1>CRM Olimpex</h1><small id="h-rol">Vendedor</small></div>
+    <div class="chip" onclick="cerrarSesion()">
       <img id="u-photo" src="" alt="">
       <span id="u-short"></span>
     </div>
@@ -187,6 +191,7 @@
         <img class="ban-photo" id="bph-act" src="" alt="">
         <div><div class="bname" id="bn-act">-</div><div class="bemail" id="be-act">-</div></div>
       </div>
+
       <div class="sec">Tipo de actividad</div>
       <div class="pills" id="tipos">
         <div class="pill on" onclick="pilla(this,'tipos')">📞 Llamada</div>
@@ -195,13 +200,41 @@
         <div class="pill" onclick="pilla(this,'tipos')">💬 WhatsApp</div>
         <div class="pill" onclick="pilla(this,'tipos')">🖥️ Video</div>
       </div>
-      <div class="sec">Cliente y proyecto</div>
-      <div class="f"><label>Cliente <span class="r">*</span></label><input type="text" id="a-cli" placeholder="Ej: Clinica San Felipe"></div>
-      <div class="f"><label>Proyecto relacionado</label><input type="text" id="a-proy" placeholder="Ej: PROY-001"></div>
+
+      <div class="sec">Cliente</div>
+      <div class="f">
+        <label>Buscar cliente <span class="r">*</span></label>
+        <div class="search-wrap" id="sw-act-cli">
+          <span class="search-icon">🔍</span>
+          <input class="search-input" id="a-cli-search" placeholder="Escribe para buscar..." autocomplete="off"
+            oninput="buscar('act-cli',this.value)" onfocus="buscar('act-cli',this.value)">
+          <span class="search-clear" id="sc-act-cli" onclick="limpiarBusqueda('act-cli')">✕</span>
+          <div class="dropdown" id="dd-act-cli"></div>
+        </div>
+        <div id="sel-act-cli"></div>
+        <input type="hidden" id="a-cli">
+      </div>
+
+      <div class="sec">Proyecto relacionado</div>
+      <div class="f">
+        <label>Buscar proyecto</label>
+        <div class="search-wrap" id="sw-act-proy">
+          <span class="search-icon">🔍</span>
+          <input class="search-input" id="a-proy-search" placeholder="Escribe para buscar..." autocomplete="off"
+            oninput="buscar('act-proy',this.value)" onfocus="buscar('act-proy',this.value)">
+          <span class="search-clear" id="sc-act-proy" onclick="limpiarBusqueda('act-proy')">✕</span>
+          <div class="dropdown" id="dd-act-proy"></div>
+        </div>
+        <div id="sel-act-proy"></div>
+        <input type="hidden" id="a-proy">
+      </div>
+
       <div class="f"><label>Contacto</label><input type="text" id="a-cont" placeholder="Ej: Dr. Garcia Lopez"></div>
+
       <div class="sec">Detalle</div>
       <div class="f"><label>Resumen <span class="r">*</span></label><textarea id="a-res" placeholder="Que paso en la actividad?" rows="3"></textarea></div>
       <div class="f"><label>Resultado</label><textarea id="a-result" placeholder="Cual fue el resultado?" rows="2"></textarea></div>
+
       <div class="sec">Proximo paso</div>
       <div class="f"><label>Accion siguiente <span class="r">*</span></label><input type="text" id="a-prox" placeholder="Ej: Enviar propuesta tecnica"></div>
       <div class="g2">
@@ -223,10 +256,24 @@
         <img class="ban-photo" id="bph-proy" src="" alt="">
         <div><div class="bname" id="bn-proy">-</div><div class="bemail" id="be-proy">-</div></div>
       </div>
+
       <div class="sec">Oportunidad</div>
       <div class="f"><label>Nombre del proyecto <span class="r">*</span></label><input type="text" id="p-nom" placeholder="Ej: Monitores UCI x5"></div>
+
+      <div class="f">
+        <label>Cliente <span class="r">*</span></label>
+        <div class="search-wrap" id="sw-proy-cli">
+          <span class="search-icon">🔍</span>
+          <input class="search-input" id="p-cli-search" placeholder="Escribe para buscar..." autocomplete="off"
+            oninput="buscar('proy-cli',this.value)" onfocus="buscar('proy-cli',this.value)">
+          <span class="search-clear" id="sc-proy-cli" onclick="limpiarBusqueda('proy-cli')">✕</span>
+          <div class="dropdown" id="dd-proy-cli"></div>
+        </div>
+        <div id="sel-proy-cli"></div>
+        <input type="hidden" id="p-cli">
+      </div>
+
       <div class="g2">
-        <div class="f"><label>Cliente <span class="r">*</span></label><input type="text" id="p-cli" placeholder="Institucion"></div>
         <div class="f"><label>Tipo</label>
           <select id="p-tipo">
             <option>Clinica Privada</option><option>Hospital Publico</option>
@@ -234,17 +281,15 @@
             <option>Subdistribuidor</option><option>Gobierno / MINSA</option>
           </select>
         </div>
+        <div class="f"><label>Ciudad</label><input type="text" id="p-ciu" placeholder="Lima"></div>
       </div>
       <div class="g2">
-        <div class="f"><label>Ciudad</label><input type="text" id="p-ciu" placeholder="Lima"></div>
         <div class="f"><label>Marca</label><input type="text" id="p-marca" placeholder="Ej: Stryker"></div>
+        <div class="f"><label>Valor ($) <span class="r">*</span></label><input type="number" id="p-val" placeholder="0" min="0"></div>
       </div>
       <div class="f"><label>Descripcion del equipo</label><input type="text" id="p-desc" placeholder="Modelo y cantidad"></div>
-      <div class="sec">Valor</div>
-      <div class="g2">
-        <div class="f"><label>Valor ($) <span class="r">*</span></label><input type="number" id="p-val" placeholder="0" min="0"></div>
-        <div class="f"><label>Margen (%)</label><input type="number" id="p-marg" placeholder="20" min="0" max="100"></div>
-      </div>
+      <div class="f"><label>Margen (%)</label><input type="number" id="p-marg" placeholder="20" min="0" max="100"></div>
+
       <div class="sec">Etapa del pipeline</div>
       <div class="etapas" id="etapas">
         <div class="etapa on" data-e="Prospeccion" onclick="etapa(this)">Prospeccion</div>
@@ -253,6 +298,7 @@
         <div class="etapa" data-e="Negociacion" onclick="etapa(this)">Negociacion</div>
         <div class="etapa" data-e="Contrato" onclick="etapa(this)">Contrato Enviado</div>
       </div>
+
       <div class="sec">Fechas y seguimiento</div>
       <div class="g2">
         <div class="f"><label>Fecha inicio</label><input type="date" id="p-fi"></div>
@@ -276,7 +322,7 @@
       <div class="sec">Datos de la institucion</div>
       <div class="f"><label>Nombre del cliente <span class="r">*</span></label><input type="text" id="c-nom" placeholder="Ej: Hospital Regional de Ica"></div>
       <div class="g2">
-        <div class="f"><label>Tipo <span class="r">*</span></label>
+        <div class="f"><label>Tipo</label>
           <select id="c-tipo">
             <option>Clinica Privada</option><option>Hospital Publico</option>
             <option>Hospital Privado</option><option>Centro Medico</option>
@@ -302,7 +348,7 @@
           <option value="C - Ocasional">C - Ocasional</option>
         </select>
       </div>
-      <div class="f"><label>Notas</label><textarea id="c-notas" placeholder="Observaciones del cliente..." rows="2"></textarea></div>
+      <div class="f"><label>Notas</label><textarea id="c-notas" placeholder="Observaciones..." rows="2"></textarea></div>
       <div class="foot"><button class="btn" id="btn-cli" onclick="envCli()"><span>🏥 Registrar cliente</span></button></div>
     </div>
 
@@ -317,13 +363,10 @@
 
 <script src="https://accounts.google.com/gsi/client" async></script>
 <script>
-// ═══════════════════════════════════════════════════
 const CLIENT_ID  = "599774592316-vqf6md9phm1cnu23pb5rncmt2bimv2j4.apps.googleusercontent.com";
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwr29BsAPKiYzK6MGIbLqE90JLJtyPDAU1yTlxDl8XcynDgGUrhK0jaJ-x0LrR7zD1_Sg/exec";
 const DOMINIO    = "olimpexperu.com";
 const ADMINS     = ["ameza@olimpexperu.com","agdelaguila@olimpexperu.com"];
-
-// Mapa email → nombre real del vendedor
 const EMAIL_NOMBRE = {
   "agdelaguila@olimpexperu.com":         "Amador del Aguila",
   "yramos@olimpexperu.com":              "Yafir Ramos",
@@ -334,7 +377,9 @@ const EMAIL_NOMBRE = {
   "ameza@olimpexperu.com":               "Andrea Meza",
 };
 
-let U = null; // { name, email, picture, esAdmin }
+let U = null;
+let CACHE_CLIENTES  = [];
+let CACHE_PROYECTOS = [];
 
 // ── AUTH ──────────────────────────────────────────
 function iniciarSesion() {
@@ -347,52 +392,34 @@ function iniciarSesion() {
       try {
         const p = await fetch("https://www.googleapis.com/oauth2/v3/userinfo",
           { headers: { Authorization: "Bearer " + t.access_token } }).then(r => r.json());
-        const email  = (p.email || "").toLowerCase();
-        const domain = email.split("@")[1] || "";
-
-        // Verificar dominio
-        if (domain !== DOMINIO) {
+        const email  = (p.email||"").toLowerCase();
+        const domain = email.split("@")[1]||"";
+        if (domain !== DOMINIO || (!EMAIL_NOMBRE[email] && !ADMINS.includes(email))) {
           document.getElementById("err-email").textContent = email;
-          mostrarPantalla("error");
-          return;
+          mostrarPantalla("error"); return;
         }
-
-        // Verificar que el email sea de un vendedor conocido
-        if (!EMAIL_NOMBRE[email] && !ADMINS.includes(email)) {
-          document.getElementById("err-email").textContent = email;
-          mostrarPantalla("error");
-          return;
-        }
-
-        U = {
-          name:    EMAIL_NOMBRE[email] || p.name,
-          email:   email,
-          picture: p.picture,
-          esAdmin: ADMINS.includes(email),
-        };
+        U = { name: EMAIL_NOMBRE[email]||p.name, email, picture: p.picture, esAdmin: ADMINS.includes(email) };
         sessionStorage.setItem("crm_u", JSON.stringify(U));
         aplicarSesion();
         mostrarPantalla("app");
+        cargarCaches();
       } catch(e) { mostrarPantalla("login"); }
     }
   }).requestAccessToken();
 }
 
 function cerrarSesion() {
-  if (!confirm("Cerrar sesion?")) return;
-  U = null;
-  sessionStorage.removeItem("crm_u");
+  if(!confirm("Cerrar sesion?")) return;
+  U=null; sessionStorage.removeItem("crm_u");
   mostrarPantalla("login");
 }
 
 function aplicarSesion() {
-  if (!U) return;
-  const first = U.name.split(" ")[0];
-  document.getElementById("u-photo").src       = U.picture;
-  document.getElementById("u-short").textContent = first;
-  document.getElementById("h-rol").textContent = U.esAdmin ? "Vista admin — todos los vendedores" : "Vendedor";
-
-  ["act","proy","cli"].forEach(x => {
+  if(!U) return;
+  document.getElementById("u-photo").src = U.picture;
+  document.getElementById("u-short").textContent = U.name.split(" ")[0];
+  document.getElementById("h-rol").textContent = U.esAdmin ? "Vista admin" : "Vendedor";
+  ["act","proy","cli"].forEach(x=>{
     document.getElementById("bph-"+x).src = U.picture;
     document.getElementById("bn-"+x).textContent  = U.name;
     document.getElementById("be-"+x).textContent  = U.email;
@@ -400,11 +427,109 @@ function aplicarSesion() {
 }
 
 function mostrarPantalla(cual) {
-  document.getElementById("login").style.display      = cual==="login"   ? "flex":"none";
-  document.getElementById("loading").style.display    = cual==="loading" ? "flex":"none";
-  document.getElementById("err-screen").style.display = cual==="error"   ? "flex":"none";
-  document.getElementById("app").style.display        = cual==="app"     ? "flex":"none";
+  document.getElementById("login").style.display      = cual==="login"   ?"flex":"none";
+  document.getElementById("loading").style.display    = cual==="loading" ?"flex":"none";
+  document.getElementById("err-screen").style.display = cual==="error"   ?"flex":"none";
+  document.getElementById("app").style.display        = cual==="app"     ?"flex":"none";
 }
+
+// ── CACHE DE CLIENTES Y PROYECTOS ─────────────────
+async function cargarCaches() {
+  try {
+    const [rc, rp] = await Promise.all([
+      fetch(SCRIPT_URL+"?data="+encodeURIComponent(JSON.stringify({tipo:"clientes",emailVendedor:U.email,vendedor:U.name}))).then(r=>r.json()),
+      fetch(SCRIPT_URL+"?data="+encodeURIComponent(JSON.stringify({tipo:"proyectos_lista",emailVendedor:U.email,vendedor:U.name}))).then(r=>r.json()),
+    ]);
+    if (rc.ok)  CACHE_CLIENTES  = rc.clientes  || [];
+    if (rp.ok)  CACHE_PROYECTOS = rp.proyectos || [];
+  } catch(e) { console.error("Error cargando caches:", e); }
+}
+
+// ── BUSCADOR ──────────────────────────────────────
+function buscar(id, query) {
+  const dd    = document.getElementById("dd-"+id);
+  const clear = document.getElementById("sc-"+id);
+  const q     = (query||"").toLowerCase().trim();
+
+  clear.style.display = q ? "block" : "none";
+
+  const esCliente = id.endsWith("cli");
+  const lista     = esCliente ? CACHE_CLIENTES : CACHE_PROYECTOS;
+
+  const filtrados = q
+    ? lista.filter(x => (x.nombre||"").toLowerCase().includes(q) || (x.cliente||"").toLowerCase().includes(q))
+    : lista.slice(0, 8);
+
+  if (filtrados.length === 0 && !q) { dd.classList.remove("show"); return; }
+
+  dd.innerHTML = filtrados.map(x => {
+    const sub = esCliente
+      ? `${x.tipo||""} · ${x.ciudad||""}`
+      : `${x.cliente||""} · ${x.etapa||""}`;
+    return `<div class="drop-item" onclick="seleccionar('${id}','${x.nombre||x.id}','${(x.nombre||x.id).replace(/'/g,"\\'")}')">
+      <div class="drop-name">${x.nombre||x.id}</div>
+      <div class="drop-sub">${sub}</div>
+    </div>`;
+  }).join("");
+
+  if (esCliente) {
+    dd.innerHTML += `<div class="drop-new" onclick="nuevoCli('${id}','${q}')">+ Registrar "${q||"nuevo cliente"}"</div>`;
+  }
+
+  dd.classList.add("show");
+}
+
+function seleccionar(id, valor, label) {
+  const hidden  = document.getElementById(id.replace("act-","a-").replace("proy-","p-").replace("-search","").replace("act-cli","a-cli").replace("act-proy","a-proy").replace("proy-cli","p-cli"));
+  const search  = document.getElementById(id+"-search");
+  const sel     = document.getElementById("sel-"+id);
+  const dd      = document.getElementById("dd-"+id);
+
+  // set hidden value
+  if (id==="act-cli")  document.getElementById("a-cli").value  = label;
+  if (id==="act-proy") document.getElementById("a-proy").value = label;
+  if (id==="proy-cli") document.getElementById("p-cli").value  = label;
+
+  search.value = "";
+  search.style.display = "none";
+  document.getElementById("sc-"+id).style.display = "none";
+  dd.classList.remove("show");
+
+  sel.innerHTML = `<div class="selected-chip">${label} <button onclick="deseleccionar('${id}')">✕</button></div>`;
+}
+
+function deseleccionar(id) {
+  if (id==="act-cli")  document.getElementById("a-cli").value  = "";
+  if (id==="act-proy") document.getElementById("a-proy").value = "";
+  if (id==="proy-cli") document.getElementById("p-cli").value  = "";
+
+  const search = document.getElementById(id+"-search");
+  search.value = ""; search.style.display = "";
+  document.getElementById("sel-"+id).innerHTML = "";
+  document.getElementById("dd-"+id).classList.remove("show");
+}
+
+function limpiarBusqueda(id) {
+  const search = document.getElementById(id+"-search");
+  search.value = "";
+  document.getElementById("sc-"+id).style.display = "none";
+  document.getElementById("dd-"+id).classList.remove("show");
+  search.focus();
+}
+
+function nuevoCli(id, nombre) {
+  document.getElementById("dd-"+id).classList.remove("show");
+  tab("cli");
+  if (nombre) document.getElementById("c-nom").value = nombre;
+  toast("Registra el cliente nuevo primero","ok");
+}
+
+// Cerrar dropdown al tocar fuera
+document.addEventListener("click", e => {
+  if (!e.target.closest(".search-wrap")) {
+    document.querySelectorAll(".dropdown").forEach(d=>d.classList.remove("show"));
+  }
+});
 
 // ── UI ────────────────────────────────────────────
 function tab(t) {
@@ -423,57 +548,46 @@ function toast(msg,tipo="ok"){
 
 // ── PENDIENTES ────────────────────────────────────
 async function cargarPendientes() {
-  if (!U) return;
-  const cont = document.getElementById("pend-content");
-  cont.innerHTML = '<div class="loading-msg">⏳ Cargando pendientes...</div>';
+  if(!U) return;
+  const cont=document.getElementById("pend-content");
+  cont.innerHTML='<div class="loading-msg">⏳ Cargando pendientes...</div>';
   try {
-    const payload = { tipo:"pendientes", emailVendedor:U.email, vendedor:U.name, esAdmin:U.esAdmin };
-    const url = SCRIPT_URL+"?data="+encodeURIComponent(JSON.stringify(payload));
-    const res  = await fetch(url);
-    const data = await res.json();
-    if (!data.ok) { cont.innerHTML='<div class="loading-msg">No se pudieron cargar los pendientes.</div>'; return; }
-    renderPendientes(data.proyectos||[], data.actividades||[]);
-  } catch(e) {
-    cont.innerHTML='<div class="loading-msg">Error de conexion. Reintenta.</div>';
-  }
+    const payload={tipo:"pendientes",emailVendedor:U.email,vendedor:U.name,esAdmin:U.esAdmin};
+    const res=await fetch(SCRIPT_URL+"?data="+encodeURIComponent(JSON.stringify(payload)));
+    const data=await res.json();
+    if(!data.ok){cont.innerHTML='<div class="loading-msg">No se pudieron cargar.</div>';return;}
+    renderPendientes(data.proyectos||[],data.actividades||[]);
+  } catch(e){cont.innerHTML='<div class="loading-msg">Error de conexion.</div>';}
 }
 
-function renderPendientes(proy, act) {
-  const cont  = document.getElementById("pend-content");
-  const total = proy.length + act.length;
-  const venc  = [...proy,...act].filter(x=>x.urgencia==="vencido").length;
-  const urg   = [...proy,...act].filter(x=>x.urgencia==="urgente").length;
-  const col   = u => u==="vencido"?"#dc3545":u==="urgente"?"#fd7e14":"#198754";
-  const badge = u => `<span class="pbadge" style="background:${col(u)}">${u==="vencido"?"VENCIDO":u==="urgente"?"URGENTE":"OK"}</span>`;
+function renderPendientes(proy,act) {
+  const cont=document.getElementById("pend-content");
+  const total=proy.length+act.length;
+  const venc=[...proy,...act].filter(x=>x.urgencia==="vencido").length;
+  const urg=[...proy,...act].filter(x=>x.urgencia==="urgente").length;
+  const col=u=>u==="vencido"?"#dc3545":u==="urgente"?"#fd7e14":"#198754";
+  const badge=u=>`<span class="pbadge" style="background:${col(u)}">${u==="vencido"?"VENCIDO":u==="urgente"?"URGENTE":"OK"}</span>`;
 
-  const cardP = p => `
-    <div class="pcard" style="border-left-color:${col(p.urgencia)}">
-      <div class="pcard-top"><div class="pcard-title">${p.nombre}</div>${badge(p.urgencia)}</div>
-      <div class="pcard-info">
-        🏥 <b>${p.cliente}</b> · ${p.etapa}<br>
-        💵 $${Number(p.valor||0).toLocaleString()}<br>
-        ➡️ ${p.sigAccion||"—"} · 🗓️ <b>${p.fechaAccion||"—"}</b>
-        ${U.esAdmin?`<br>👤 ${p.vendedor}`:""}
-      </div>
-    </div>`;
+  const cardP=p=>`<div class="pcard" style="border-left-color:${col(p.urgencia)}">
+    <div class="pcard-top"><div class="pcard-title">${p.nombre}</div>${badge(p.urgencia)}</div>
+    <div class="pcard-info">🏥 <b>${p.cliente}</b> · ${p.etapa}<br>
+    💵 $${Number(p.valor||0).toLocaleString()}<br>
+    ➡️ ${p.sigAccion||"—"} · 🗓️ <b>${p.fechaAccion||"—"}</b>
+    ${U.esAdmin?`<br>👤 ${p.vendedor}`:""}</div></div>`;
 
-  const cardA = a => `
-    <div class="pcard" style="border-left-color:${col(a.urgencia)}">
-      <div class="pcard-top"><div class="pcard-title teal">${a.tipo} · ${a.cliente}</div>${badge(a.urgencia)}</div>
-      <div class="pcard-info">
-        📝 ${a.resumen}<br>
-        ➡️ ${a.proxPaso||"—"} · 🗓️ <b>${a.fechaProx||"—"}</b>
-        ${U.esAdmin?`<br>👤 ${a.vendedor}`:""}
-      </div>
-    </div>`;
+  const cardA=a=>`<div class="pcard" style="border-left-color:${col(a.urgencia)}">
+    <div class="pcard-top"><div class="pcard-title teal">${a.tipo} · ${a.cliente}</div>${badge(a.urgencia)}</div>
+    <div class="pcard-info">📝 ${a.resumen}<br>
+    ➡️ ${a.proxPaso||"—"} · 🗓️ <b>${a.fechaProx||"—"}</b>
+    ${U.esAdmin?`<br>👤 ${a.vendedor}`:""}</div></div>`;
 
-  cont.innerHTML = `
+  cont.innerHTML=`
     <div class="pend-resumen">
       <div><div class="pend-num">${total}</div><div class="pend-label">Total</div></div>
       <div><div class="pend-num" style="color:#ff6b6b">${venc}</div><div class="pend-label">Vencidos</div></div>
       <div><div class="pend-num" style="color:#ffd43b">${urg}</div><div class="pend-label">Urgentes</div></div>
     </div>
-    ${U.esAdmin?'<div style="background:#FEF3C7;border-radius:8px;padding:8px 12px;font-size:11px;color:#92400E;margin-bottom:12px">👑 Vista admin — mostrando pendientes de todo el equipo</div>':""}
+    ${U.esAdmin?'<div style="background:#FEF3C7;border-radius:8px;padding:8px 12px;font-size:11px;color:#92400E;margin-bottom:12px">👑 Vista admin — todos los vendedores</div>':""}
     <div class="pend-sec">🎯 Proyectos activos (${proy.length})</div>
     ${proy.length>0?proy.map(cardP).join(""):'<div class="empty-msg">Sin proyectos pendientes 🎉</div>'}
     <div class="pend-sec">📅 Actividades pendientes (${act.length})</div>
@@ -482,22 +596,22 @@ function renderPendientes(proy, act) {
 
 // ── ENVIOS ────────────────────────────────────────
 const ETAPA_MAP={"Prospeccion":"Prospeccion","Calificacion":"Calificacion","Demo":"Demo/Propuesta","Negociacion":"Negociacion","Contrato":"Contrato Enviado"};
-const PROB_MAP ={"Prospeccion":.1,"Calificacion":.25,"Demo":.5,"Negociacion":.7,"Contrato":.85};
+const PROB_MAP={"Prospeccion":.1,"Calificacion":.25,"Demo":.5,"Negociacion":.7,"Contrato":.85};
 
 async function envAct() {
   if(!U) return toast("Sesion expirada","err");
   const cli=document.getElementById("a-cli").value.trim();
   const res=document.getElementById("a-res").value.trim();
   const prox=document.getElementById("a-prox").value.trim();
-  if(!cli) return toast("Escribe el cliente","err");
+  if(!cli) return toast("Selecciona o escribe el cliente","err");
   if(!res) return toast("Agrega el resumen","err");
   if(!prox) return toast("Define el proximo paso","err");
   const tipo=(document.querySelector("#tipos .pill.on")?.textContent||"Llamada").replace(/[^\w\s]/g,"").trim();
   await send("btn-act",{tipo:"actividad",vendedor:U.name,emailVendedor:U.email,tipoAct:tipo,
     cliente:cli,proyecto:document.getElementById("a-proy").value.trim(),
-    contacto:document.getElementById("a-cont").value.trim(),resumen:res,
-    resultado:document.getElementById("a-result").value.trim(),proximoPaso:prox,
-    fechaProximo:document.getElementById("a-fprox").value,
+    contacto:document.getElementById("a-cont").value.trim(),
+    resumen:res,resultado:document.getElementById("a-result").value.trim(),
+    proximoPaso:prox,fechaProximo:document.getElementById("a-fprox").value,
     prioridad:document.getElementById("a-prio").value},"Actividad registrada","act");
 }
 
@@ -507,7 +621,7 @@ async function envProy() {
   const cli=document.getElementById("p-cli").value.trim();
   const val=document.getElementById("p-val").value;
   if(!nom) return toast("Escribe el nombre del proyecto","err");
-  if(!cli) return toast("Escribe el cliente","err");
+  if(!cli) return toast("Selecciona o escribe el cliente","err");
   if(!val) return toast("Ingresa el valor estimado","err");
   const etKey=document.querySelector("#etapas .etapa.on")?.dataset.e||"Prospeccion";
   await send("btn-proy",{tipo:"proyecto",vendedor:U.name,emailVendedor:U.email,
@@ -543,7 +657,7 @@ async function envCli() {
     notas:document.getElementById("c-notas").value.trim()},"Cliente registrado","cli");
 }
 
-async function send(btnId, payload, msgOk, prefix) {
+async function send(btnId,payload,msgOk,prefix) {
   const btn=document.getElementById(btnId);
   btn.classList.add("busy");
   btn.querySelector("span").textContent="Enviando...";
@@ -551,8 +665,9 @@ async function send(btnId, payload, msgOk, prefix) {
     await fetch(SCRIPT_URL+"?data="+encodeURIComponent(JSON.stringify(payload)),{method:"GET",mode:"no-cors"});
     toast("✅ "+msgOk);
     limpiar(prefix);
-  } catch(e){ toast("Error de red, reintenta","err"); }
-  finally {
+    await cargarCaches(); // refrescar lista de clientes/proyectos
+  } catch(e){toast("Error de red, reintenta","err");}
+  finally{
     btn.classList.remove("busy");
     const labels={act:"✅ Registrar actividad",proy:"🎯 Registrar proyecto",cli:"🏥 Registrar cliente"};
     btn.querySelector("span").textContent=labels[prefix];
@@ -561,24 +676,29 @@ async function send(btnId, payload, msgOk, prefix) {
 
 function limpiar(p) {
   const map={
-    act:["a-cli","a-proy","a-cont","a-res","a-result","a-prox"],
-    proy:["p-nom","p-cli","p-ciu","p-marca","p-desc","p-val","p-marg","p-sig","p-comp","p-notas"],
+    act:["a-cont","a-res","a-result","a-prox"],
+    proy:["p-nom","p-ciu","p-marca","p-desc","p-val","p-marg","p-sig","p-comp","p-notas"],
     cli:["c-nom","c-ciu","c-ruc","c-cont","c-cargo","c-tel","c-email","c-marcas","c-notas"],
   };
   (map[p]||[]).forEach(id=>{const el=document.getElementById(id);if(el)el.value="";});
-  if(p==="act") document.querySelectorAll("#tipos .pill").forEach((x,i)=>x.classList.toggle("on",i===0));
-  if(p==="proy") document.querySelectorAll("#etapas .etapa").forEach((x,i)=>x.classList.toggle("on",i===0));
+  if(p==="act"){
+    document.querySelectorAll("#tipos .pill").forEach((x,i)=>x.classList.toggle("on",i===0));
+    deseleccionar("act-cli"); deseleccionar("act-proy");
+  }
+  if(p==="proy"){
+    document.querySelectorAll("#etapas .etapa").forEach((x,i)=>x.classList.toggle("on",i===0));
+    deseleccionar("proy-cli");
+  }
   document.getElementById("panel-"+p)?.scrollTo({top:0,behavior:"smooth"});
 }
 
-// ── INICIO ────────────────────────────────────────
 window.addEventListener("load",()=>{
   const hoy=new Date().toISOString().split("T")[0];
   document.querySelectorAll('input[type=date]').forEach(el=>el.value=hoy);
-  try {
+  try{
     const s=sessionStorage.getItem("crm_u");
-    if(s){ U=JSON.parse(s); aplicarSesion(); mostrarPantalla("app"); return; }
-  } catch(e){}
+    if(s){U=JSON.parse(s);aplicarSesion();mostrarPantalla("app");cargarCaches();return;}
+  }catch(e){}
   mostrarPantalla("login");
 });
 </script>
