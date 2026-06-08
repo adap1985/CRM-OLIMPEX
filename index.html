@@ -204,30 +204,14 @@
 
       <div class="sec">Cliente</div>
       <div class="f">
-        <label>Buscar cliente <span class="r">*</span></label>
-        <div class="search-wrap" id="sw-act-cli">
-          <span class="search-icon">🔍</span>
-          <input class="search-input" id="a-cli-search" placeholder="Escribe para buscar..." autocomplete="off"
-            oninput="buscar('act-cli',this.value)" onfocus="buscar('act-cli',this.value)">
-          <span class="search-clear" id="sc-act-cli" onclick="limpiarBusqueda('act-cli')">✕</span>
-          <div class="dropdown" id="dd-act-cli"></div>
-        </div>
-        <div id="sel-act-cli"></div>
-        <input type="hidden" id="a-cli">
+        <label>Cliente <span class="r">*</span></label>
+        <select id="a-cli"><option value="">— Selecciona un cliente —</option></select>
       </div>
 
       <div class="sec">Proyecto relacionado</div>
       <div class="f">
-        <label>Buscar proyecto</label>
-        <div class="search-wrap" id="sw-act-proy">
-          <span class="search-icon">🔍</span>
-          <input class="search-input" id="a-proy-search" placeholder="Escribe para buscar..." autocomplete="off"
-            oninput="buscar('act-proy',this.value)" onfocus="buscar('act-proy',this.value)">
-          <span class="search-clear" id="sc-act-proy" onclick="limpiarBusqueda('act-proy')">✕</span>
-          <div class="dropdown" id="dd-act-proy"></div>
-        </div>
-        <div id="sel-act-proy"></div>
-        <input type="hidden" id="a-proy">
+        <label>Proyecto relacionado</label>
+        <select id="a-proy"><option value="">— Ninguno —</option></select>
       </div>
 
       <div class="f"><label>Contacto</label><input type="text" id="a-cont" placeholder="Ej: Dr. Garcia Lopez"></div>
@@ -263,15 +247,7 @@
 
       <div class="f">
         <label>Cliente <span class="r">*</span></label>
-        <div class="search-wrap" id="sw-proy-cli">
-          <span class="search-icon">🔍</span>
-          <input class="search-input" id="p-cli-search" placeholder="Escribe para buscar..." autocomplete="off"
-            oninput="buscar('proy-cli',this.value)" onfocus="buscar('proy-cli',this.value)">
-          <span class="search-clear" id="sc-proy-cli" onclick="limpiarBusqueda('proy-cli')">✕</span>
-          <div class="dropdown" id="dd-proy-cli"></div>
-        </div>
-        <div id="sel-proy-cli"></div>
-        <input type="hidden" id="p-cli">
+        <select id="p-cli"><option value="">— Selecciona un cliente —</option></select>
       </div>
 
       <div class="g2">
