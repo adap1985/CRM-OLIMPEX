@@ -78,16 +78,17 @@
   .search-wrap{position:relative}
   .search-input{width:100%;background:#fff;border:1.5px solid var(--gray2);border-radius:var(--rs);padding:11px 13px 11px 38px;font-family:'DM Sans',sans-serif;font-size:15px;color:var(--text);outline:none;transition:border-color .15s,box-shadow .15s;-webkit-appearance:none}
   .search-input:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(10,123,107,.12)}
-  .search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:15px;pointer-events:none}
-  .search-clear{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:16px;cursor:pointer;color:var(--gray3);display:none}
-  .dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1.5px solid var(--teal);border-radius:var(--rs);z-index:100;max-height:200px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,.12);display:none}
-  .dropdown.show{display:block}
-  .drop-item{padding:11px 13px;cursor:pointer;border-bottom:1px solid var(--gray2);transition:background .1s}
+  .search-icon{position:absolute;left:12px;top:14px;font-size:15px;pointer-events:none}
+  .search-clear{position:absolute;right:12px;top:14px;font-size:16px;cursor:pointer;color:var(--gray3);display:none}
+  .drop-list{display:none;margin-top:4px;border:1.5px solid var(--teal);border-radius:var(--rs);background:#fff;overflow:hidden}
+  .drop-list.show{display:block}
+  .drop-item{padding:12px 13px;cursor:pointer;border-bottom:1px solid var(--gray2);-webkit-tap-highlight-color:rgba(10,123,107,.1)}
   .drop-item:last-child{border-bottom:none}
-  .drop-item:active{background:var(--gray1)}
+  .drop-item:active,.drop-item:hover{background:var(--gray1)}
   .drop-name{font-size:14px;font-weight:600;color:var(--text)}
-  .drop-sub{font-size:11px;color:var(--gray3);margin-top:1px}
-  .drop-new{padding:11px 13px;cursor:pointer;color:var(--teal);font-size:13px;font-weight:600;border-top:1px solid var(--gray2)}
+  .drop-sub{font-size:11px;color:var(--gray3);margin-top:2px}
+  .drop-new{padding:12px 13px;cursor:pointer;color:var(--teal);font-size:13px;font-weight:600;border-top:1px solid var(--gray2);-webkit-tap-highlight-color:rgba(10,123,107,.1)}
+  .drop-new:active{background:var(--gray1)}
   .selected-chip{display:inline-flex;align-items:center;gap:6px;background:var(--teal);color:#fff;border-radius:20px;padding:5px 12px;font-size:12px;font-weight:600;margin-top:5px}
   .selected-chip button{background:none;border:none;color:#fff;cursor:pointer;font-size:14px;padding:0;line-height:1}
 
@@ -446,6 +447,10 @@ async function cargarCaches() {
 }
 
 // ── BUSCADOR ──────────────────────────────────────
+function buscarFocus(id) {
+  buscar(id, document.getElementById(id+"-search").value);
+}
+
 function buscar(id, query) {
   const dd    = document.getElementById("dd-"+id);
   const clear = document.getElementById("sc-"+id);
@@ -470,8 +475,9 @@ function buscar(id, query) {
     const div = document.createElement("div");
     div.className = "drop-item";
     div.innerHTML = `<div class="drop-name">${x.nombre||x.id}</div><div class="drop-sub">${sub}</div>`;
-    div.addEventListener("mousedown", (e) => { e.preventDefault(); seleccionar(id, x.nombre||x.id); });
-    div.addEventListener("touchstart", (e) => { e.preventDefault(); seleccionar(id, x.nombre||x.id); }, {passive:false});
+    // Use click for desktop, touchend for mobile
+    const doSelect = () => seleccionar(id, x.nombre||x.id);
+    div.addEventListener("click", doSelect);
     dd.appendChild(div);
   });
 
@@ -479,8 +485,7 @@ function buscar(id, query) {
     const divNew = document.createElement("div");
     divNew.className = "drop-new";
     divNew.textContent = `+ Registrar "${q||"nuevo cliente"}"`;
-    divNew.addEventListener("mousedown", (e) => { e.preventDefault(); nuevoCli(id, q); });
-    divNew.addEventListener("touchstart", (e) => { e.preventDefault(); nuevoCli(id, q); }, {passive:false});
+    divNew.addEventListener("click", () => nuevoCli(id, q));
     dd.appendChild(divNew);
   }
 
@@ -541,7 +546,7 @@ function nuevoCli(id, nombre) {
 // Cerrar dropdown al tocar fuera
 document.addEventListener("click", e => {
   if (!e.target.closest(".search-wrap")) {
-    document.querySelectorAll(".dropdown").forEach(d=>d.classList.remove("show"));
+    document.querySelectorAll(".drop-list").forEach(d=>d.classList.remove("show"));
   }
 });
 
