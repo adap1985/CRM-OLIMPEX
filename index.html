@@ -98,10 +98,10 @@
   .etapa{flex-shrink:0;padding:7px 12px;border-radius:6px;border:1.5px solid var(--gray2);background:#fff;font-size:12px;font-weight:600;color:var(--text);cursor:pointer;white-space:nowrap;transition:all .15s}
   .etapa.on{color:#fff;border-color:transparent}
   .etapa[data-e="Prospeccion"].on{background:#6366F1}
-  .etapa[data-e="Calificacion"].on{background:#F59E0B}
   .etapa[data-e="Demo"].on{background:#3B82F6}
+  .etapa[data-e="Cotizacion"].on{background:#F59E0B}
+  .etapa[data-e="Evaluacion"].on{background:#8B5CF6}
   .etapa[data-e="Negociacion"].on{background:#F97316}
-  .etapa[data-e="Contrato"].on{background:#10B981}
 
   /* PENDIENTES */
   .pend-resumen{background:var(--blue);color:#fff;border-radius:10px;padding:12px 16px;margin-bottom:14px;display:flex;gap:20px}
@@ -262,12 +262,9 @@
       <div class="g2">
         <div class="f"><label>Tipo</label>
           <select id="p-tipo">
-            <option>Clínica Privada</option>
-            <option>Hospital Público</option>
-            <option>Hospital Privado</option>
-            <option>Centro Médico</option>
+            <option>Clinica Privada</option>
+            <option>Hospital Publico</option>
             <option>Subdistribuidor</option>
-            <option>Gobierno / MINSA</option>
           </select>
         </div>
         <div class="f"><label>Ciudad</label><input type="text" id="p-ciu" placeholder="Lima"></div>
@@ -282,10 +279,10 @@
       <div class="sec">Etapa del pipeline</div>
       <div class="etapas" id="etapas">
         <div class="etapa on" data-e="Prospeccion" onclick="etapa(this)">Prospeccion</div>
-        <div class="etapa" data-e="Calificacion" onclick="etapa(this)">Calificacion</div>
-        <div class="etapa" data-e="Demo" onclick="etapa(this)">Demo/Propuesta</div>
+        <div class="etapa" data-e="Demo" onclick="etapa(this)">Presentacion de Demo</div>
+        <div class="etapa" data-e="Cotizacion" onclick="etapa(this)">Cotizacion Enviada</div>
+        <div class="etapa" data-e="Evaluacion" onclick="etapa(this)">Evaluacion</div>
         <div class="etapa" data-e="Negociacion" onclick="etapa(this)">Negociacion</div>
-        <div class="etapa" data-e="Contrato" onclick="etapa(this)">Contrato Enviado</div>
       </div>
 
       <div class="sec">Fechas y seguimiento</div>
@@ -313,12 +310,9 @@
       <div class="g2">
         <div class="f"><label>Tipo</label>
           <select id="c-tipo">
-            <option>Clínica Privada</option>
-            <option>Hospital Público</option>
-            <option>Hospital Privado</option>
-            <option>Centro Médico</option>
+            <option>Clinica Privada</option>
+            <option>Hospital Publico</option>
             <option>Subdistribuidor</option>
-            <option>Gobierno / MINSA</option>
           </select>
         </div>
         <div class="f"><label>Ciudad</label><input type="text" id="c-ciu" placeholder="Lima"></div>
@@ -624,8 +618,8 @@ function titleCase(str) {
 }
 
 // ── ENVIOS ────────────────────────────────────────
-const ETAPA_MAP={"Prospeccion":"Prospeccion","Calificacion":"Calificacion","Demo":"Demo/Propuesta","Negociacion":"Negociacion","Contrato":"Contrato Enviado"};
-const PROB_MAP={"Prospeccion":.1,"Calificacion":.25,"Demo":.5,"Negociacion":.7,"Contrato":.85};
+const ETAPA_MAP={"Prospeccion":"Prospeccion","Demo":"Presentacion de Demo","Cotizacion":"Cotizacion Enviada","Evaluacion":"Evaluacion","Negociacion":"Negociacion"};
+const PROB_MAP={"Prospeccion":.1,"Demo":.3,"Cotizacion":.5,"Evaluacion":.7,"Negociacion":.85};
 
 async function envAct() {
   if(!U) return toast("Sesion expirada","err");
