@@ -127,6 +127,24 @@
   .toast.show{top:16px}
   .toast.ok{background:var(--teal)}
   .toast.err{background:var(--red)}
+
+  /* META */
+  .meta-card{background:#fff;border-radius:12px;padding:18px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+  .meta-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px}
+  .meta-nombre{font-size:14px;font-weight:700;color:var(--navy)}
+  .meta-trim{font-size:11px;color:var(--gray3);margin-top:2px}
+  .meta-pct{font-size:22px;font-weight:700;color:var(--teal)}
+  .meta-bar-wrap{background:var(--gray2);border-radius:20px;height:10px;margin-bottom:12px;overflow:hidden}
+  .meta-bar{height:100%;border-radius:20px;transition:width .6s ease;background:linear-gradient(90deg,var(--teal),var(--teal2))}
+  .meta-bar.danger{background:linear-gradient(90deg,#dc3545,#ff6b6b)}
+  .meta-bar.warning{background:linear-gradient(90deg,#F97316,#fbbf24)}
+  .meta-nums{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center}
+  .meta-num-val{font-size:14px;font-weight:700;color:var(--text)}
+  .meta-num-label{font-size:10px;color:var(--gray3);margin-top:2px}
+  .meta-falta{background:var(--navy);color:#fff;border-radius:8px;padding:10px 14px;margin-top:10px;display:flex;justify-content:space-between;align-items:center}
+  .meta-falta-label{font-size:12px;opacity:.7}
+  .meta-falta-val{font-size:16px;font-weight:700}
+  .btn-meta-refresh{width:100%;padding:11px;background:var(--navy);color:#fff;border:none;border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:14px;display:flex;align-items:center;justify-content:center;gap:7px}
 </style>
 </head>
 <body>
@@ -179,6 +197,7 @@
     <button class="tab"    onclick="tab('proy')">🎯 Proyecto</button>
     <button class="tab"    onclick="tab('cli')">🏥 Cliente</button>
     <button class="tab"    onclick="tab('pend')">⏳ Pendientes</button>
+    <button class="tab"    onclick="tab('meta')">🏆 Mi Meta</button>
   </div>
 
   <div class="wrap">
@@ -379,6 +398,12 @@
       </div>
 
       <div id="pend-content"><div class="loading-msg">Toca "Actualizar" para cargar tus pendientes</div></div>
+    </div>
+
+    <!-- META -->
+    <div class="panel" id="panel-meta">
+      <button class="btn-meta-refresh" onclick="cargarMeta()">🔄 Actualizar mi meta</button>
+      <div id="meta-content"><div class="loading-msg">Toca "Actualizar" para ver tu progreso</div></div>
     </div>
 
   </div>
@@ -587,10 +612,11 @@ function sbDeseleccionar(id) {
 
 // ── UI ────────────────────────────────────────────
 function tab(t) {
-  const tabs=["act","proy","cli","pend"];
+  const tabs=["act","proy","cli","pend","meta"];
   document.querySelectorAll(".tab").forEach((el,i)=>el.classList.toggle("on",tabs[i]===t));
   tabs.forEach(x=>document.getElementById("panel-"+x).classList.toggle("on",x===t));
   if(t==="pend") cargarPendientes();
+  if(t==="meta") cargarMeta();
 }
 function pilla(el,g){document.querySelectorAll("#"+g+" .pill").forEach(p=>p.classList.remove("on"));el.classList.add("on")}
 function etapa(el){document.querySelectorAll("#etapas .etapa").forEach(e=>e.classList.remove("on"));el.classList.add("on")}
@@ -809,6 +835,82 @@ function limpiar(p) {
     sbDeseleccionar("proy-cli");
   }
   document.getElementById("panel-"+p)?.scrollTo({top:0,behavior:"smooth"});
+}
+
+// ── META ──────────────────────────────────────────
+async function cargarMeta() {
+  if (!U) return;
+  const cont = document.getElementById("meta-content");
+  cont.innerHTML = '<div class="loading-msg">⏳ Calculando tu progreso...</div>';
+  try {
+    const payload = { tipo:"metas", emailVendedor:U.email, vendedor:U.name, esAdmin:U.esAdmin };
+    const res  = await fetch(SCRIPT_URL+"?data="+encodeURIComponent(JSON.stringify(payload)));
+    const data = await res.json();
+    if (!data.ok) { cont.innerHTML='<div class="loading-msg">No se pudo cargar la meta.</div>'; return; }
+    renderMeta(data.metas||[]);
+  } catch(e) {
+    cont.innerHTML='<div class="loading-msg">Error de conexion. Reintenta.</div>';
+  }
+}
+
+function renderMeta(metas) {
+  const cont = document.getElementById("meta-content");
+  if (metas.length === 0) {
+    cont.innerHTML = '<div class="loading-msg">No hay metas configuradas aún.<br>Pide a Amador o Andrea que las configure.</div>';
+    return;
+  }
+
+  const fmt = n => "$"+Number(n||0).toLocaleString("es-PE",{minimumFractionDigits:0});
+
+  const cards = metas.map(m => {
+    const pct    = m.porcentaje || 0;
+    const barCls = pct < 30 ? "danger" : pct < 70 ? "warning" : "";
+    const emoji  = pct >= 100 ? "🏆" : pct >= 70 ? "💪" : pct >= 30 ? "📈" : "⚠️";
+
+    return `<div class="meta-card">
+      <div class="meta-header">
+        <div>
+          <div class="meta-nombre">${emoji} ${m.nombre}</div>
+          <div class="meta-trim">${m.trimestre||"Trimestre actual"}</div>
+        </div>
+        <div class="meta-pct">${pct}%</div>
+      </div>
+      <div class="meta-bar-wrap">
+        <div class="meta-bar ${barCls}" style="width:${pct}%"></div>
+      </div>
+      <div class="meta-nums">
+        <div>
+          <div class="meta-num-val">${fmt(m.acumulado)}</div>
+          <div class="meta-num-label">Vendido</div>
+        </div>
+        <div>
+          <div class="meta-num-val">${fmt(m.meta)}</div>
+          <div class="meta-num-label">Meta</div>
+        </div>
+        <div>
+          <div class="meta-num-val" style="color:${m.falta>0?'#dc3545':'#198754'}">${m.falta>0?fmt(m.falta):'✅'}</div>
+          <div class="meta-num-label">${m.falta>0?"Falta":"Cumplida"}</div>
+        </div>
+      </div>
+      ${m.falta > 0 ? `
+      <div class="meta-falta">
+        <div class="meta-falta-label">Para cumplir la meta necesitas</div>
+        <div class="meta-falta-val">${fmt(m.falta)} más</div>
+      </div>` : `
+      <div class="meta-falta" style="background:var(--teal)">
+        <div class="meta-falta-label">¡Meta cumplida! 🎉</div>
+        <div class="meta-falta-val">+${fmt(m.acumulado - m.meta)}</div>
+      </div>`}
+    </div>`;
+  }).join("");
+
+  cont.innerHTML = `
+    ${U.esAdmin && metas.length > 1 ? '<div style="background:#FEF3C7;border-radius:8px;padding:8px 12px;font-size:11px;color:#92400E;margin-bottom:12px">👑 Vista admin — metas de todo el equipo</div>' : ""}
+    ${cards}
+    <div style="background:var(--gray2);border-radius:8px;padding:10px 14px;font-size:11px;color:var(--gray3);margin-top:4px">
+      💡 Las metas se configuran en la hoja ⚙️ Configuración de Google Sheets.<br>
+      Las ventas cerradas (Cerrado Ganado) se suman automáticamente.
+    </div>`;
 }
 
 window.addEventListener("load",()=>{
