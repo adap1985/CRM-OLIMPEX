@@ -262,9 +262,12 @@
       <div class="g2">
         <div class="f"><label>Tipo</label>
           <select id="p-tipo">
-            <option>Clinica Privada</option><option>Hospital Publico</option>
-            <option>Hospital Privado</option><option>Centro Medico</option>
-            <option>Subdistribuidor</option><option>Gobierno / MINSA</option>
+            <option>Clínica Privada</option>
+            <option>Hospital Público</option>
+            <option>Hospital Privado</option>
+            <option>Centro Médico</option>
+            <option>Subdistribuidor</option>
+            <option>Gobierno / MINSA</option>
           </select>
         </div>
         <div class="f"><label>Ciudad</label><input type="text" id="p-ciu" placeholder="Lima"></div>
@@ -310,9 +313,12 @@
       <div class="g2">
         <div class="f"><label>Tipo</label>
           <select id="c-tipo">
-            <option>Clinica Privada</option><option>Hospital Publico</option>
-            <option>Hospital Privado</option><option>Centro Medico</option>
-            <option>Subdistribuidor</option><option>Gobierno / MINSA</option>
+            <option>Clínica Privada</option>
+            <option>Hospital Público</option>
+            <option>Hospital Privado</option>
+            <option>Centro Médico</option>
+            <option>Subdistribuidor</option>
+            <option>Gobierno / MINSA</option>
           </select>
         </div>
         <div class="f"><label>Ciudad</label><input type="text" id="c-ciu" placeholder="Lima"></div>
@@ -501,7 +507,11 @@ function sbSeleccionar(id, valor, obj) {
 
   // Si seleccionó cliente en actividad → cargar sus proyectos
   if (id === "act-cli") {
-    const proysCli = CACHE_PROYECTOS.filter(p => (p.cliente||"").toLowerCase() === valor.toLowerCase());
+    const proysCli = CACHE_PROYECTOS.filter(p => 
+      (p.cliente||"").toLowerCase().trim() === valor.toLowerCase().trim() ||
+      (p.cliente||"").toLowerCase().trim().includes(valor.toLowerCase().trim()) ||
+      valor.toLowerCase().trim().includes((p.cliente||"").toLowerCase().trim())
+    );
     const fProy = document.getElementById("f-act-proy");
     const resProy = document.getElementById("sbr-act-proy");
     if (proysCli.length > 0) {
@@ -607,13 +617,19 @@ function renderPendientes(proy,act) {
     ${act.length>0?act.map(cardA).join(""):'<div class="empty-msg">Sin actividades pendientes 🎉</div>'}`;
 }
 
+// ── NORMALIZAR TEXTO (Primera letra mayuscula, resto minuscula) ──
+function titleCase(str) {
+  if (!str) return str;
+  return str.trim().toLowerCase().replace(/\w/g, c => c.toUpperCase());
+}
+
 // ── ENVIOS ────────────────────────────────────────
 const ETAPA_MAP={"Prospeccion":"Prospeccion","Calificacion":"Calificacion","Demo":"Demo/Propuesta","Negociacion":"Negociacion","Contrato":"Contrato Enviado"};
 const PROB_MAP={"Prospeccion":.1,"Calificacion":.25,"Demo":.5,"Negociacion":.7,"Contrato":.85};
 
 async function envAct() {
   if(!U) return toast("Sesion expirada","err");
-  const cli=document.getElementById("a-cli").value.trim();
+  const cli=titleCase(document.getElementById("a-cli").value.trim());
   const res=document.getElementById("a-res").value.trim();
   const prox=document.getElementById("a-prox").value.trim();
   if(!cli) return toast("Selecciona o escribe el cliente","err");
@@ -630,8 +646,8 @@ async function envAct() {
 
 async function envProy() {
   if(!U) return toast("Sesion expirada","err");
-  const nom=document.getElementById("p-nom").value.trim();
-  const cli=document.getElementById("p-cli").value.trim();
+  const nom=titleCase(document.getElementById("p-nom").value.trim());
+  const cli=titleCase(document.getElementById("p-cli").value.trim());
   const val=document.getElementById("p-val").value;
   if(!nom) return toast("Escribe el nombre del proyecto","err");
   if(!cli) return toast("Selecciona o escribe el cliente","err");
@@ -654,7 +670,7 @@ async function envProy() {
 
 async function envCli() {
   if(!U) return toast("Sesion expirada","err");
-  const nom=document.getElementById("c-nom").value.trim();
+  const nom=titleCase(document.getElementById("c-nom").value.trim());
   const cont=document.getElementById("c-cont").value.trim();
   if(!nom)  return toast("Escribe el nombre del cliente","err");
   if(!cont) return toast("Escribe el contacto","err");
