@@ -341,6 +341,43 @@
     <!-- PENDIENTES -->
     <div class="panel" id="panel-pend">
       <button class="btn-refresh" onclick="cargarPendientes()">🔄 Actualizar pendientes</button>
+
+      <!-- FILTROS -->
+      <div id="pend-filtros" style="display:none;margin-bottom:12px">
+        <div style="display:flex;gap:8px;margin-bottom:8px">
+          <div style="flex:1">
+            <label style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gray3);display:block;margin-bottom:4px">Tipo</label>
+            <select id="fil-tipo" onchange="filtrarPendientes()" style="width:100%;padding:8px 10px;border:1.5px solid var(--gray2);border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:13px;background:#fff;-webkit-appearance:none">
+              <option value="">Todos</option>
+              <option value="proyectos">Solo Proyectos</option>
+              <option value="actividades">Solo Actividades</option>
+            </select>
+          </div>
+          <div style="flex:1">
+            <label style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gray3);display:block;margin-bottom:4px">Urgencia</label>
+            <select id="fil-urgencia" onchange="filtrarPendientes()" style="width:100%;padding:8px 10px;border:1.5px solid var(--gray2);border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:13px;background:#fff;-webkit-appearance:none">
+              <option value="">Todos</option>
+              <option value="vencido">⚠️ Vencidos</option>
+              <option value="urgente">🔥 Urgentes</option>
+              <option value="normal">✅ OK</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gray3);display:block;margin-bottom:4px">Buscar cliente o proyecto</label>
+          <input type="text" id="fil-buscar" oninput="filtrarPendientes()" placeholder="Escribe para filtrar..." style="width:100%;padding:9px 12px;border:1.5px solid var(--gray2);border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:14px;background:#fff;outline:none">
+        </div>
+        <div id="fil-vendedor-wrap" style="display:none;margin-top:8px">
+          <label style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gray3);display:block;margin-bottom:4px">Vendedor</label>
+          <select id="fil-vendedor" onchange="filtrarPendientes()" style="width:100%;padding:8px 10px;border:1.5px solid var(--gray2);border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:13px;background:#fff;-webkit-appearance:none">
+            <option value="">Todos los vendedores</option>
+          </select>
+        </div>
+        <div style="display:flex;justify-content:flex-end;margin-top:8px">
+          <button onclick="limpiarFiltros()" style="background:none;border:none;color:var(--teal);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer">✕ Limpiar filtros</button>
+        </div>
+      </div>
+
       <div id="pend-content"><div class="loading-msg">Toca "Actualizar" para cargar tus pendientes</div></div>
     </div>
 
@@ -577,38 +614,97 @@ async function cargarPendientes() {
   } catch(e){cont.innerHTML='<div class="loading-msg">Error de conexion.</div>';}
 }
 
-function renderPendientes(proy,act) {
-  const cont=document.getElementById("pend-content");
-  const total=proy.length+act.length;
-  const venc=[...proy,...act].filter(x=>x.urgencia==="vencido").length;
-  const urg=[...proy,...act].filter(x=>x.urgencia==="urgente").length;
-  const col=u=>u==="vencido"?"#dc3545":u==="urgente"?"#fd7e14":"#198754";
-  const badge=u=>`<span class="pbadge" style="background:${col(u)}">${u==="vencido"?"VENCIDO":u==="urgente"?"URGENTE":"OK"}</span>`;
+// Cache global de pendientes para filtrar
+let CACHE_PEND_PROY = [];
+let CACHE_PEND_ACT  = [];
 
-  const cardP=p=>`<div class="pcard" style="border-left-color:${col(p.urgencia)}">
+function renderPendientes(proy, act) {
+  CACHE_PEND_PROY = proy;
+  CACHE_PEND_ACT  = act;
+
+  // Mostrar filtros
+  document.getElementById("pend-filtros").style.display = "block";
+
+  // Si es admin, poblar select de vendedores
+  if (U.esAdmin) {
+    document.getElementById("fil-vendedor-wrap").style.display = "block";
+    const todos = [...proy, ...act];
+    const vendedores = [...new Set(todos.map(x => x.vendedor).filter(Boolean))].sort();
+    const sel = document.getElementById("fil-vendedor");
+    sel.innerHTML = '<option value="">Todos los vendedores</option>';
+    vendedores.forEach(v => {
+      const opt = document.createElement("option");
+      opt.value = v; opt.textContent = v;
+      sel.appendChild(opt);
+    });
+  }
+
+  filtrarPendientes();
+}
+
+function filtrarPendientes() {
+  const tipo     = document.getElementById("fil-tipo")?.value || "";
+  const urgencia = document.getElementById("fil-urgencia")?.value || "";
+  const buscar   = (document.getElementById("fil-buscar")?.value || "").toLowerCase().trim();
+  const vendedor = document.getElementById("fil-vendedor")?.value || "";
+
+  let proy = CACHE_PEND_PROY.filter(p => {
+    if (tipo === "actividades") return false;
+    if (urgencia && p.urgencia !== urgencia) return false;
+    if (vendedor && p.vendedor !== vendedor) return false;
+    if (buscar && !p.nombre.toLowerCase().includes(buscar) && !p.cliente.toLowerCase().includes(buscar)) return false;
+    return true;
+  });
+
+  let act = CACHE_PEND_ACT.filter(a => {
+    if (tipo === "proyectos") return false;
+    if (urgencia && a.urgencia !== urgencia) return false;
+    if (vendedor && a.vendedor !== vendedor) return false;
+    if (buscar && !a.cliente.toLowerCase().includes(buscar) && !a.resumen.toLowerCase().includes(buscar)) return false;
+    return true;
+  });
+
+  const total = proy.length + act.length;
+  const venc  = [...proy,...act].filter(x=>x.urgencia==="vencido").length;
+  const urg   = [...proy,...act].filter(x=>x.urgencia==="urgente").length;
+  const col   = u => u==="vencido"?"#dc3545":u==="urgente"?"#fd7e14":"#198754";
+  const badge = u => `<span class="pbadge" style="background:${col(u)}">${u==="vencido"?"VENCIDO":u==="urgente"?"URGENTE":"OK"}</span>`;
+
+  const cardP = p => `<div class="pcard" style="border-left-color:${col(p.urgencia)}">
     <div class="pcard-top"><div class="pcard-title">${p.nombre}</div>${badge(p.urgencia)}</div>
     <div class="pcard-info">🏥 <b>${p.cliente}</b> · ${p.etapa}<br>
     💵 $${Number(p.valor||0).toLocaleString()}<br>
     ➡️ ${p.sigAccion||"—"} · 🗓️ <b>${p.fechaAccion||"—"}</b>
     ${U.esAdmin?`<br>👤 ${p.vendedor}`:""}</div></div>`;
 
-  const cardA=a=>`<div class="pcard" style="border-left-color:${col(a.urgencia)}">
+  const cardA = a => `<div class="pcard" style="border-left-color:${col(a.urgencia)}">
     <div class="pcard-top"><div class="pcard-title teal">${a.tipo} · ${a.cliente}</div>${badge(a.urgencia)}</div>
     <div class="pcard-info">📝 ${a.resumen}<br>
     ➡️ ${a.proxPaso||"—"} · 🗓️ <b>${a.fechaProx||"—"}</b>
     ${U.esAdmin?`<br>👤 ${a.vendedor}`:""}</div></div>`;
 
-  cont.innerHTML=`
+  const cont = document.getElementById("pend-content");
+  cont.innerHTML = `
     <div class="pend-resumen">
       <div><div class="pend-num">${total}</div><div class="pend-label">Total</div></div>
       <div><div class="pend-num" style="color:#ff6b6b">${venc}</div><div class="pend-label">Vencidos</div></div>
       <div><div class="pend-num" style="color:#ffd43b">${urg}</div><div class="pend-label">Urgentes</div></div>
     </div>
-    ${U.esAdmin?'<div style="background:#FEF3C7;border-radius:8px;padding:8px 12px;font-size:11px;color:#92400E;margin-bottom:12px">👑 Vista admin — todos los vendedores</div>':""}
+    ${U.esAdmin?'<div style="background:#FEF3C7;border-radius:8px;padding:8px 12px;font-size:11px;color:#92400E;margin-bottom:10px">👑 Vista admin — todos los vendedores</div>':""}
     <div class="pend-sec">🎯 Proyectos activos (${proy.length})</div>
     ${proy.length>0?proy.map(cardP).join(""):'<div class="empty-msg">Sin proyectos pendientes 🎉</div>'}
     <div class="pend-sec">📅 Actividades pendientes (${act.length})</div>
     ${act.length>0?act.map(cardA).join(""):'<div class="empty-msg">Sin actividades pendientes 🎉</div>'}`;
+}
+
+function limpiarFiltros() {
+  document.getElementById("fil-tipo").value     = "";
+  document.getElementById("fil-urgencia").value = "";
+  document.getElementById("fil-buscar").value   = "";
+  if (document.getElementById("fil-vendedor")) {
+    document.getElementById("fil-vendedor").value = "";
+  }
+  filtrarPendientes();
 }
 
 // ── NORMALIZAR TEXTO (Primera letra mayuscula, resto minuscula) ──
