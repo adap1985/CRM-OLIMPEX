@@ -482,7 +482,9 @@ async function cargarCaches() {
       fetch(SCRIPT_URL+"?data="+encodeURIComponent(JSON.stringify({tipo:"clientes",emailVendedor:U.email,vendedor:U.name}))).then(r=>r.json()),
       fetch(SCRIPT_URL+"?data="+encodeURIComponent(JSON.stringify({tipo:"proyectos_lista",emailVendedor:U.email,vendedor:U.name}))).then(r=>r.json()),
     ]);
-    if (rc.ok) CACHE_CLIENTES = rc.clientes || [];
+    if (rc.ok) {
+      CACHE_CLIENTES = rc.clientes || [];
+    }
     if (rp.ok) CACHE_PROYECTOS = rp.proyectos || [];
   } catch(e) { console.error("Error cargando caches:", e); }
 }
@@ -820,10 +822,20 @@ async function send(btnId,payload,msgOk,prefix) {
   btn.classList.add("busy");
   btn.querySelector("span").textContent="Enviando...";
   try {
-    await fetch(SCRIPT_URL+"?data="+encodeURIComponent(JSON.stringify(payload)),{method:"GET",mode:"no-cors"});
+    // Para cliente usamos fetch normal para detectar duplicados
+    if (prefix === "cli") {
+      const res  = await fetch(SCRIPT_URL+"?data="+encodeURIComponent(JSON.stringify(payload)));
+      const data = await res.json();
+      if (data.duplicado) {
+        toast("⚠️ " + data.error, "err");
+        return;
+      }
+    } else {
+      await fetch(SCRIPT_URL+"?data="+encodeURIComponent(JSON.stringify(payload)),{method:"GET",mode:"no-cors"});
+    }
     toast("✅ "+msgOk);
     limpiar(prefix);
-    await cargarCaches(); // refrescar lista de clientes/proyectos
+    await cargarCaches();
   } catch(e){toast("Error de red, reintenta","err");}
   finally{
     btn.classList.remove("busy");
