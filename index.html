@@ -803,8 +803,16 @@ async function envCli() {
   if(!U) return toast("Sesion expirada","err");
   const nom=titleCase(document.getElementById("c-nom").value.trim());
   const cont=document.getElementById("c-cont").value.trim();
+  const rucVal=document.getElementById("c-ruc").value.trim();
   if(!nom)  return toast("Escribe el nombre del cliente","err");
   if(!cont) return toast("Escribe el contacto","err");
+
+  // Verificar RUC duplicado desde cache local
+  if (rucVal && rucVal.length > 0) {
+    const dup = CACHE_CLIENTES.find(c => (c.ruc||"").toString().trim() === rucVal);
+    if (dup) return toast("⚠️ RUC ya existe: " + dup.nombre, "err");
+  }
+
   await send("btn-cli",{tipo:"cliente",vendedor:U.name,emailVendedor:U.email,
     nombre:nom,tipo_cli:document.getElementById("c-tipo").value,
     ciudad:document.getElementById("c-ciu").value.trim(),
@@ -822,17 +830,7 @@ async function send(btnId,payload,msgOk,prefix) {
   btn.classList.add("busy");
   btn.querySelector("span").textContent="Enviando...";
   try {
-    // Para cliente usamos fetch normal para detectar duplicados
-    if (prefix === "cli") {
-      const res  = await fetch(SCRIPT_URL+"?data="+encodeURIComponent(JSON.stringify(payload)));
-      const data = await res.json();
-      if (data.duplicado) {
-        toast("⚠️ " + data.error, "err");
-        return;
-      }
-    } else {
-      await fetch(SCRIPT_URL+"?data="+encodeURIComponent(JSON.stringify(payload)),{method:"GET",mode:"no-cors"});
-    }
+    await fetch(SCRIPT_URL+"?data="+encodeURIComponent(JSON.stringify(payload)),{method:"GET",mode:"no-cors"});
     toast("✅ "+msgOk);
     limpiar(prefix);
     await cargarCaches();
