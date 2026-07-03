@@ -715,14 +715,19 @@ function filtrarPendientes() {
 
   const cardP = p => `<div class="pcard" style="border-left-color:${col(p.urgencia)}">
     <div class="pcard-top"><div class="pcard-title">${p.nombre}</div>${badge(p.urgencia)}</div>
-    <div class="pcard-info">🏥 <b>${p.cliente}</b> · ${p.etapa}<br>
+    <div class="pcard-info">
+    <span style="background:#1B3A6B;color:#fff;padding:1px 7px;border-radius:10px;font-size:10px;font-weight:700">${p.id}</span><br>
+    🏥 <b>${p.cliente}</b> · ${p.etapa}<br>
     💵 $${Number(p.valor||0).toLocaleString()}<br>
     ➡️ ${p.sigAccion||"—"} · 🗓️ <b>${p.fechaAccion||"—"}</b>
     ${U.esAdmin?`<br>👤 ${p.vendedor}`:""}</div></div>`;
 
   const cardA = a => `<div class="pcard" style="border-left-color:${col(a.urgencia)}">
     <div class="pcard-top"><div class="pcard-title teal">${a.tipo} · ${a.cliente}</div>${badge(a.urgencia)}</div>
-    <div class="pcard-info">📝 ${a.resumen}<br>
+    <div class="pcard-info">
+    <span style="background:#0D6E6E;color:#fff;padding:1px 7px;border-radius:10px;font-size:10px;font-weight:700">${a.id}</span>
+    ${a.proyecto && a.proyecto!=="—"?`<span style="background:#6366F1;color:#fff;padding:1px 7px;border-radius:10px;font-size:10px;font-weight:700;margin-left:4px">${a.proyecto.split("—")[0].trim()}</span>`:""}
+    <br>📝 ${a.resumen}<br>
     ➡️ ${a.proxPaso||"—"} · 🗓️ <b>${a.fechaProx||"—"}</b>
     ${U.esAdmin?`<br>👤 ${a.vendedor}`:""}</div></div>`;
 
