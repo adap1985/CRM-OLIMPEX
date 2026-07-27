@@ -213,6 +213,7 @@
          </div>
          <div id="sbsel-act-cli"></div>
          <input type="hidden" id="a-cli">
+         <input type="hidden" id="a-cli-id">
        </div>
 
        <div class="f" id="f-act-proy" style="display:none">
@@ -277,6 +278,7 @@
         </div>
         <div id="sbsel-proy-cli"></div>
         <input type="hidden" id="p-cli">
+        <input type="hidden" id="p-cli-id">
       </div>
 
       <div class="g2">
@@ -544,6 +546,10 @@ function sbSeleccionar(id, valor, obj) {
   const hiddenId = id === "act-cli" ? "a-cli" : id === "act-proy" ? "a-proy" : "p-cli";
   document.getElementById(hiddenId).value = valor;
 
+  // NUEVO: guardar tambien el ID del cliente seleccionado (para enlazar por ID, no por nombre)
+  if (id === "act-cli")  document.getElementById("a-cli-id").value = obj.id || "";
+  if (id === "proy-cli") document.getElementById("p-cli-id").value = obj.id || "";
+
   // Ocultar input y mostrar chip
   const inp = document.getElementById("sbi-"+id);
   if (inp) inp.style.display = "none";
@@ -573,11 +579,10 @@ function sbSeleccionar(id, valor, obj) {
     document.getElementById("f-act-etapa").style.display = "none";
     document.getElementById("a-etapa").value = "";
 
-    const proysCli = CACHE_PROYECTOS.filter(p => 
-      (p.cliente||"").toLowerCase().trim() === valor.toLowerCase().trim() ||
-      (p.cliente||"").toLowerCase().trim().includes(valor.toLowerCase().trim()) ||
-      valor.toLowerCase().trim().includes((p.cliente||"").toLowerCase().trim())
-    );
+    // NUEVO: se relaciona por ID de cliente (exacto), ya no por coincidencia de nombre.
+    // Esto evita que se sugiera el proyecto equivocado cuando dos clientes
+    // tienen nombres parecidos, o el mismo cliente con variantes de escritura.
+    const proysCli = CACHE_PROYECTOS.filter(p => p.clienteId && obj.id && p.clienteId === obj.id);
     const fProy = document.getElementById("f-act-proy");
     const resProy = document.getElementById("sbr-act-proy");
     if (proysCli.length > 0) {
@@ -608,6 +613,11 @@ function sbSeleccionar(id, valor, obj) {
 function sbDeseleccionar(id) {
   const hiddenId = id === "act-cli" ? "a-cli" : id === "act-proy" ? "a-proy" : "p-cli";
   document.getElementById(hiddenId).value = "";
+
+  // NUEVO: limpiar tambien el ID de cliente guardado
+  if (id === "act-cli")  document.getElementById("a-cli-id").value = "";
+  if (id === "proy-cli") document.getElementById("p-cli-id").value = "";
+
   const inp = document.getElementById("sbi-"+id);
   if (inp) { inp.style.display = ""; inp.value = ""; }
   const selDiv = document.getElementById("sbsel-"+id);
@@ -775,7 +785,8 @@ async function envAct() {
   if(!prox) return toast("Define el proximo paso","err");
   const tipo=(document.querySelector("#tipos .pill.on")?.textContent||"Llamada").replace(/[^\w\s]/g,"").trim();
   await send("btn-act",{tipo:"actividad",vendedor:U.name,emailVendedor:U.email,tipoAct:tipo,
-    cliente:cli,proyecto:document.getElementById("a-proy").value.trim(),
+    cliente:cli,clienteId:document.getElementById("a-cli-id").value,
+    proyecto:document.getElementById("a-proy").value.trim(),
     contacto:document.getElementById("a-cont").value.trim(),
     resumen:res,resultado:document.getElementById("a-result").value.trim(),
     proximoPaso:prox,fechaProximo:document.getElementById("a-fprox").value,
@@ -793,7 +804,8 @@ async function envProy() {
   if(!val) return toast("Ingresa el valor estimado","err");
   const etKey=document.querySelector("#etapas .etapa.on")?.dataset.e||"Prospeccion";
   await send("btn-proy",{tipo:"proyecto",vendedor:U.name,emailVendedor:U.email,
-    nombre:nom,cliente:cli,tipoCliente:document.getElementById("p-tipo").value,
+    nombre:nom,cliente:cli,clienteId:document.getElementById("p-cli-id").value,
+    tipoCliente:document.getElementById("p-tipo").value,
     ciudad:document.getElementById("p-ciu").value.trim(),
     marca:document.getElementById("p-marca").value.trim(),
     descripcion:document.getElementById("p-desc").value.trim(),
